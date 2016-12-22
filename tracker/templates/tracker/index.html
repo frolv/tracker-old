@@ -1,0 +1,28 @@
+{% extends "tracker/hexistracker.html" %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static "css/index.css" %}">
+{% endblock %}
+
+{% block pagetitle %}
+<title>Hexis Tracker</title>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+
+  <h3>Hexis Tracker</h3>
+
+  <form class="form-inline form-rsn-search" id="searchform">
+    <input class="form-control" type="text" id="search-username"
+    placeholder="Enter RSN" required />
+    <button class="btn btn-default btn-sm" type="submit">Search</button>
+  </form>
+
+</div>
+
+{% endblock %}

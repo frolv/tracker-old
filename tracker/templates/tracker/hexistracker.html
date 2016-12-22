@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static "lib/bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/hexistracker.css" %}">
+    {% block styles %}{% endblock %}
+    {% block pagetitle %}{% endblock %}
+  </head>
+
+  <body>
+    {% block content %}{% endblock %}
+    <script src="{% static "lib/jquery/jquery-3.1.1.min.js" %}"></script>
+    <script src="{% static "lib/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/navbar.js" %}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+
+</html>
