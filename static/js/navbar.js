@@ -16,9 +16,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+$('#search-username').on('invalid', function(evt) {
+    this.setCustomValidity('Please enter a valid username.');
+});
+
+$('#search-username').on('input', function(evt) {
+    this.setCustomValidity('');
+});
+
 $('#searchform').submit(function(evt) {
     evt.preventDefault();
 
     var user = $('#search-username').val();
-    document.location.href = '/account/' + user;
+    if (user)
+        document.location.href = '/account/' + user.replace(/ /g, '_') + '/';
 });
