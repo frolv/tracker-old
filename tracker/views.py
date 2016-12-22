@@ -22,11 +22,12 @@ from django.template import loader
 
 from tracker.models import RSAccount
 
-# Create your views here.
+# Tracker main page.
 def index(request):
     template = loader.get_template('tracker/index.html')
     return HttpResponse(template.render(request))
 
+# Tracker for a single account.
 def account(request, user):
     try:
         username = RSAccount.objects.get(username__iexact=user).username
