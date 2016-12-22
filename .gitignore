@@ -3,4 +3,5 @@ hexistracker/settings_local.py
 hexistracker/__pycache__
 tracker/migrations
 tracker/__pycache__
+static/lib
 *.swp
