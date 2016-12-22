@@ -1,0 +1,10 @@
+.form-rsn-search {
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.form-rsn-search .form-control {
+  position: relative;
+  height: auto;
+  padding: 4px;
+}
