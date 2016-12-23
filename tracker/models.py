@@ -25,3 +25,34 @@ class RSAccount(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class DataPoint(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True, editable=False)
+
+    def __str__(self):
+        return 'Datapoint: %s at %s' % (str(self.rsaccount), str(self.time))
+
+
+class Skill(models.Model):
+    skill_id = models.PositiveSmallIntegerField(primary_key=True)
+    skillname = models.CharField(max_length=16)
+
+    def __str__(self):
+        return '%d %s' % (self.skill_id, self.skillname)
+
+
+class SkillLevel(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE)
+    experience = models.BigIntegerField()
+    rank = models.IntegerField()
+
+    class Meta:
+        unique_together = (( 'skill', 'datapoint' ))
+
+    def __str__(self):
+        return '%d: %d, %d' % (self.skill_id, self.experience, self.rank)
