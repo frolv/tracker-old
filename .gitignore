@@ -1,7 +1,7 @@
 manage.py
 hexistracker/settings_local.py
-hexistracker/__pycache__
 tracker/migrations
-tracker/__pycache__
 static/lib
 *.swp
+*/__pycache__/
+*/*/__pycache__/
