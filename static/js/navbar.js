@@ -29,5 +29,5 @@ $('#searchform').submit(function(evt) {
 
     var user = $('#search-username').val();
     if (user)
-        document.location.href = '/account/' + user.replace(/ /g, '_') + '/';
+        document.location.href = '/player/' + user.replace(/ /g, '_') + '/';
 });

@@ -17,9 +17,12 @@
 #
 
 from django.conf.urls import url
-from . import views
+import tracker.views as views
 
 urlpatterns = [
-    url(r'^$', views.index, name = 'index'),
-    url(r'^account/(?P<user>[a-zA-Z0-9_]+)/$', views.account, name = 'account'),
+    url(r'^$', views.index, name='index'),
+    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/$', views.player, name='player'),
+    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/(?P<period>day|week|month|year)$', \
+        views.player, name='player'),
+    url(r'^updateplayer$', views.updateplayer),
 ]
