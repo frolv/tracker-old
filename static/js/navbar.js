@@ -24,10 +24,20 @@ $('#search-username').on('input', function(evt) {
     this.setCustomValidity('');
 });
 
-$('#searchform').submit(function(evt) {
+$('#navbar-searchform').submit(function(evt) {
     evt.preventDefault();
 
     var user = $('#search-username').val();
-    if (user)
-        document.location.href = '/player/' + user.replace(/ /g, '_') + '/';
+    if (user.match(/^[a-zA-Z0-9_ ]{1,12}$/)) {
+        var match = $('#search-period').html().match(/(\w+)/);
+        document.location.href = '/player/' + user.replace(/ /g, '_') + '/'
+                + match[0].toLowerCase();
+    }
+});
+
+$('.search-period-dropdown').click(function(evt) {
+    var period = this.id.substring(14);
+
+    $('#search-period').html(period.charAt(0).toUpperCase() + period.slice(1)
+        + ' <span class="caret"></span>');
 });

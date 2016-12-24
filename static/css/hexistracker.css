@@ -1,6 +1,25 @@
 body {
-  padding-top: 20px;
+  padding-top: 70px;
   padding-bottom: 20px;
   background-color: #222222;
   color: #cccccc;
+}
+
+#tracker-navbar {
+  background-color: #333333;
+  border-color: #181818;
+  color: #adadad;
+}
+
+#tracker-navbar a:hover {
+  background-color: #444444;
+}
+
+#tracker-navbar .search-period-dropdown:hover {
+  background-color: #cccccc;
+}
+
+#tracker-navbar #search-period {
+  width: 84px;
+  border-radius: 0px;
 }
