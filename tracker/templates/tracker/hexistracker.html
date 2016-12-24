@@ -34,6 +34,57 @@
   </head>
 
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse"
+         id="tracker-navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Hexis Tracking</a>
+        </div>
+        <form class="navbar-form navbar-left" id="navbar-searchform">
+          <div class="input-group">
+            <input type="text" class="form-control" id="search-username"
+            pattern="[a-zA-Z0-9_ ]{1,12}" placeholder="Enter RSN" required />
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default dropdown-toggle"
+              id="search-period" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false"> Week
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li>
+                  <a href="#" id="search-period-day"
+                  class="search-period-dropdown">Day</a>
+                </li>
+                <li>
+                  <a href="#" id="search-period-week"
+                  class="search-period-dropdown">Week</a>
+                </li>
+                <li>
+                  <a href="#" id="search-period-month"
+                  class="search-period-dropdown">Month</a>
+                </li>
+                <li>
+                  <a href="#" id="search-period-year"
+                  class="search-period-dropdown">Year</a>
+                </li>
+              </ul>
+              <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+        <ul class="nav navbar-nav">
+          <li><a href="#">Current Top</a></li>
+          <li><a href="#">Records</a></li>
+          <li><a href="#">Virtual Hiscores</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+    </nav>
+
     {% block content %}{% endblock %}
     <script src="{% static "lib/jquery/jquery-3.1.1.min.js" %}"></script>
     <script src="{% static "lib/bootstrap/js/bootstrap.min.js" %}"></script>
