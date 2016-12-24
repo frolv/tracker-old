@@ -38,7 +38,7 @@ def player(request, user, period='week'):
     table_data = template.player_skill_table(datapoints)
 
     context = {
-        'username': acc.username,
+        'username': acc.username.replace('_', ' '),
         'period': period,
         'table_data': table_data,
         'lastupdate': datapoints[0][0].time,
@@ -47,6 +47,7 @@ def player(request, user, period='week'):
     return render(request, 'tracker/player.html', context)
 
 
+# Process request to update a player.
 def updateplayer(request):
     if (request.method != 'GET'):
         return HttpResponseBadRequest()
