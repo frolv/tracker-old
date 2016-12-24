@@ -1,0 +1,24 @@
+#player-skills-table-wrapper {
+  margin-top: 20px;
+}
+
+.player-skills-table td,
+.player-skills-table th {
+  text-align: center;
+  padding: 6px !important;
+}
+
+.player-skills-table td:hover {
+  background-color: #333333;
+  cursor: default;
+}
+
+.player-skills-table .player-table-positive {
+  color: green;
+  font-weight: bold;
+}
+
+.player-skills-table .player-table-negative {
+  color: red;
+  font-weight: bold;
+}
