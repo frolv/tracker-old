@@ -18,25 +18,36 @@
 
 from django.db import models
 
-# Create your models here.
-
 class RSAccount(models.Model):
-    username = models.CharField(max_length=12)
+    """
+    A tracked OSRS account, with name and ID.
+    """
+
+    username = models.CharField(max_length=12, db_index=True)
 
     def __str__(self):
         return self.username
 
 
 class DataPoint(models.Model):
+    """
+    A data point for a specific account at a given time.
+    """
+
     id = models.BigAutoField(primary_key=True)
-    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE)
-    time = models.DateTimeField(auto_now_add=True, editable=False)
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+                                  db_index=True)
+    time = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
 
     def __str__(self):
         return 'Datapoint: %s at %s' % (str(self.rsaccount), str(self.time))
 
 
 class Skill(models.Model):
+    """
+    A skill in OSRS.
+    """
+
     skill_id = models.PositiveSmallIntegerField(primary_key=True)
     skillname = models.CharField(max_length=16)
 
@@ -45,9 +56,14 @@ class Skill(models.Model):
 
 
 class SkillLevel(models.Model):
+    """
+    Experience in rank in a certain skilll at a certain datapoint.
+    """
+
     id = models.BigAutoField(primary_key=True)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE)
+    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+                                  db_index=True)
     experience = models.BigIntegerField()
     rank = models.IntegerField()
 
@@ -56,3 +72,78 @@ class SkillLevel(models.Model):
 
     def __str__(self):
         return '%d: %d, %d' % (self.skill_id, self.experience, self.rank)
+
+
+class Current(models.Model):
+    """
+    Current experience gain in a skill for a player within a time period: day,
+    week, month or year. Stores first and last datapoints within the period and
+    the experience gained.
+    """
+
+    DAY = 'D'
+    WEEK = 'W'
+    MONTH = 'M'
+    YEAR = 'Y'
+    PERIOD_CHOICES = (
+        (DAY, 'Day'),
+        (WEEK, 'Week'),
+        (MONTH, 'Month'),
+        (YEAR, 'Year'),
+    )
+
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+                                  db_index=True)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+                              db_index=True, related_name='+')
+    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+                            db_index=True, related_name='+')
+    experience = models.BigIntegerField(db_index=True)
+    period = models.CharField(max_length=1, choices=PERIOD_CHOICES, db_index=True)
+
+    class Meta:
+        unique_together = (( 'rsaccount', 'skill', 'period' ))
+
+    def __str__(self):
+        return '%s: %d xp %s in %s at %s' % (self.rsaccount.username,
+                                             self.experience, self.period,
+                                             self.skill.skillname,
+                                             self.start.time)
+
+
+class Record(models.Model):
+    """
+    Record experience gained by a player in a skill within a certain period.
+    Identical to Current; see it for more details.
+    """
+
+    DAY = 'D'
+    WEEK = 'W'
+    MONTH = 'M'
+    YEAR = 'Y'
+    PERIOD_CHOICES = (
+        (DAY, 'Day'),
+        (WEEK, 'Week'),
+        (MONTH, 'Month'),
+        (YEAR, 'Year'),
+    )
+
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+                                  db_index=True)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+                              db_index=True, related_name='+')
+    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+                            db_index=True, related_name='+')
+    experience = models.BigIntegerField(db_index=True)
+    period = models.CharField(max_length=1, choices=PERIOD_CHOICES, db_index=True)
+
+    class Meta:
+        unique_together = (( 'rsaccount', 'skill', 'period' ))
+
+    def __str__(self):
+        return '%s: %d xp %s in %s at %s' % (self.rsaccount.username,
+                                             self.experience, self.period,
+                                             self.skill.skillname,
+                                             self.start.time)
