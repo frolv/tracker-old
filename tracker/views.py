@@ -36,15 +36,31 @@ def player(request, user, period='week'):
 
     datapoints = accounttracker.get_data_range(acc, period)
     table_data = template.player_skill_table(datapoints)
+    firstupdate = accounttracker.first_datapoint(acc).time
+
+    if len(datapoints) == 0:
+        lastupdate = accounttracker.latest_datapoint(acc).time
+        skills = accounttracker.skills()
+    else:
+        lastupdate = datapoints[0][0].time
+        skills = None
+
+    records = template.player_records(acc, 0)
+    skillname = 'Overall'
 
     context = {
         'username': acc.username.replace('_', ' '),
         'period': period,
+        'periods': ['day', 'week', 'month', 'year'],
         'table_data': table_data,
-        'lastupdate': datapoints[0][0].time,
+        'table_skills': skills,
+        'firstupdate': firstupdate,
+        'lastupdate': lastupdate,
+        'records': records,
+        'skillname': skillname,
     }
 
-    return render(request, 'tracker/player.html', context)
+    return render(request, 'tracker/player/player.html', context)
 
 
 # Process request to update a player.
