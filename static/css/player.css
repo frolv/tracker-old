@@ -1,5 +1,54 @@
+.player-skills-name {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#player-period-buttons-wrapper {
+  width: 100%;
+}
+
+#player-period-buttons {
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+#player-period-buttons .btn {
+  width: 25%;
+}
+
 #player-skills-table-wrapper {
   margin-top: 20px;
+  position: relative;
+}
+
+#player-skills-table-disabled {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  background-color: #555555;
+  opacity: 0.5;
+}
+
+#player-skills-table-disabled-text {
+  position: absolute;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-top: 50%;
+  padding: 10px;
+  z-index: 3;
+  color: #cc1100;
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+  background-color: #222222;
+  border: 1px solid #777777;
+  border-radius: 4px;
+  -webkit-box-shadow: 4px 4px 6px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 4px 4px 6px 0px rgba(0,0,0,0.75);
+  box-shadow: 4px 4px 6px 0px rgba(0,0,0,0.75);
 }
 
 .player-skills-table td,
@@ -8,9 +57,21 @@
   padding: 6px !important;
 }
 
+.player-skills-table .active-row {
+  background-color: #333333;
+}
+
+.player-skills-table .active-row td:hover {
+  background-color: #444444;
+}
+
 .player-skills-table td:hover {
   background-color: #333333;
   cursor: default;
+}
+
+.player-skills-table .player-table-skill:hover {
+  cursor: pointer;
 }
 
 .player-skills-table .player-table-positive {
@@ -21,4 +82,16 @@
 .player-skills-table .player-table-negative {
   color: red;
   font-weight: bold;
+}
+
+.player-stats {
+  text-align: center;
+}
+
+#player-records {
+  margin-top: 20px;
+}
+
+#player-record-table tbody > tr > td {
+  border: none;
 }
