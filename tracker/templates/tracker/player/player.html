@@ -38,15 +38,38 @@
   <div class="row">
 
     <div class="player-skills col-md-8">
-      <h3 class="text-center">Last {{ period }} for <b>{{ username }}</b></h3>
+      <h3 class="player-skills-name">Last {{ period }} for <b>{{ username }}</b></h3>
+      <div id="player-period-buttons-wrapper">
+        <div class="btn-group" id="player-period-buttons" role="group"
+        aria-label="period-buttons">
+          {% for p in periods %}
+            {% if p == period %}
+              <a class="btn btn-default active" href="{{ p }}">{{ p|title }}</a>
+            {% else %}
+              <a class="btn btn-default" href="{{ p }}">{{ p|title}}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
       <div id="player-skills-table-wrapper">
-        {% include "tracker/player-skills-table.html" %}
+        {% if table_data|length == 0 %}
+          <div id="player-skills-table-disabled">
+          </div>
+          <div id="player-skills-table-disabled-text">
+            <p>No datapoints for this player in this time period.</p>
+          </div>
+          {% include "tracker/player/skill-table.html" %}
+        {% else %}
+          {% include "tracker/player/skill-table.html" %}
+        {% endif %}
       </div>
     </div>
     <div class="player-stats col-md-4">
+      <p>Player first tracked at {{ firstupdate|date:"H:i:s T, M d Y" }}.</p>
       <p>Last updated at {{ lastupdate|date:"H:i:s T, M d Y" }}.</p>
       <a href="#" id="player-update">Update</a>
       <p id="player-update-result"></p>
+      {% include "tracker/player/record-table.html" %}
     </div>
 
   </div>
