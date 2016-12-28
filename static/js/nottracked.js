@@ -25,7 +25,7 @@ $('#track-player').click(function(evt) {
 
     $.ajax ({
         type: 'GET',
-        url: '/updateplayer',
+        url: '/tracker/updateplayer',
         data: {
             player: player
         },
