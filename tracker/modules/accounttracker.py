@@ -222,6 +222,15 @@ def skills():
     return Skill.objects.order_by('skill_id')
 
 
+def skill_name(skill_id):
+    try:
+        name = Skill.objects.get(skill_id=skill_id).skillname
+    except Skill.DoesNotExist:
+        return ''
+
+    return name
+
+
 class RecentUpdateError(Exception):
     pass
 
