@@ -65,8 +65,14 @@
       </div>
     </div>
     <div class="player-stats col-md-4">
-      <p>Player first tracked at {{ firstupdate|date:"H:i:s T, M d Y" }}.</p>
-      <p>Last updated at {{ lastupdate|date:"H:i:s T, M d Y" }}.</p>
+      <div class"player-updates">
+        <div id="player-first-tracked">
+          <p>Player first tracked at {{ firstupdate|date:"H:i:s T, M d Y" }}.</p>
+        </div>
+        <div id="player-last-update">
+          {% include "tracker/player/last-update.html" %}
+        </div>
+      </div>
       <a href="#" id="player-update">Update</a>
       <p id="player-update-result"></p>
       <div id="player-records">
