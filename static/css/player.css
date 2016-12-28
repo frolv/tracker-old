@@ -88,6 +88,11 @@
   text-align: center;
 }
 
+#player-update-result {
+  padding-top: 5px;
+  height: 36px;
+}
+
 #player-records {
   margin-top: 20px;
 }
