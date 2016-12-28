@@ -23,12 +23,18 @@ from django.template import loader
 from tracker.models import RSAccount
 from tracker.modules import accounttracker, osrsapi, template
 
-# Tracker main page.
 def index(request):
+    """
+    Tracker main page view.
+    """
+
     return render(request, 'tracker/index.html')
 
-# Tracker for a single account.
 def player(request, user, period='week'):
+    """
+    Tracker view for a single account for the given period.
+    """
+
     try:
         acc = RSAccount.objects.get(username__iexact=user)
     except RSAccount.DoesNotExist:
@@ -63,8 +69,11 @@ def player(request, user, period='week'):
     return render(request, 'tracker/player/player.html', context)
 
 
-# Process request to update a player.
 def updateplayer(request):
+    """
+    Player update request.
+    """
+
     if (request.method != 'GET'):
         return HttpResponseBadRequest()
 
@@ -80,3 +89,25 @@ def updateplayer(request):
         return HttpResponse('-4')
 
     return HttpResponse('OK')
+
+
+def recordstable(request):
+    """
+    Record table HTML for a given player and skill.
+    """
+
+    if (request.method != 'GET'):
+        return HttpResponseBadRequest()
+
+    try:
+        acc = RSAccount.objects.get(username__iexact=request.GET['player'])
+        skill = int(request.GET['skill_id'])
+    except RSAccount.DoesNotExist:
+        return HttpResponse('-2')
+
+    context = {
+        'records': template.player_records(acc, skill),
+        'skillname': accounttracker.skill_name(skill),
+    }
+
+    return render(request, 'tracker/player/record-table.html', context)

@@ -25,7 +25,7 @@ $('#player-update').click(function(evt) {
 
     $.ajax ({
         type: 'GET',
-        url: '/updateplayer',
+        url: '/tracker/updateplayer',
         data: {
             player: player
         },
@@ -53,3 +53,30 @@ $('#player-update').click(function(evt) {
 $(document).ready(function(evt) {
     $('[data-toggle="tooltip"]').tooltip();
 });
+
+$('.player-table-skill').click(function(evt) {
+    var skillid = this.id.substring(19)
+    var match = document.location.pathname.match(/\/player\/(.*)\//);
+
+    $('.player-table-row').removeClass('active-row');
+    $('#player-table-row-' + skillid).addClass('active-row');
+
+    $.ajax ({
+        type: 'GET',
+        url: '/tracker/recordstable',
+        data: {
+            player: match[1],
+            skill_id: skillid
+        },
+        success: function(data) {
+            if (data == '-1') {
+            } else {
+                $('#player-records').html(data);
+            }
+        },
+        failure: function(data) {
+        }
+    });
+});
+
+$('#player-table-row-0').addClass('active-row');
