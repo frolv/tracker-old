@@ -111,3 +111,49 @@ def recordstable(request):
     }
 
     return render(request, 'tracker/player/record-table.html', context)
+
+
+def skillstable(request):
+    """
+    Respond with skills table HTML for a given player.
+    """
+
+    if (request.method != 'GET' or not request.GET['player'] \
+            or not request.GET['period']):
+        return HttpResponseBadRequest()
+
+    try:
+        acc = RSAccount.objects.get(username__iexact=request.GET['player'])
+    except RSAccount.DoesNotExist:
+        return HttpResponse('-2')
+
+    datapoints = accounttracker.get_data_range(acc, request.GET['period'])
+    table_data = template.player_skill_table(datapoints)
+
+    if len(datapoints) == 0:
+        skills = accounttracker.skills()
+    else:
+        skills = None
+
+    context = {
+        'table_data': table_data,
+        'table_skills': skills,
+    }
+
+    return render(request, 'tracker/player/skill-table.html', context)
+
+
+def lastupdate(request):
+    if (request.method != 'GET' or not request.GET['player']):
+        return HttpResponseBadRequest()
+
+    try:
+        acc = RSAccount.objects.get(username__iexact=request.GET['player'])
+    except RSAccount.DoesNotExist:
+        return HttpResponse('-2')
+
+    context = {
+        'lastupdate': accounttracker.latest_datapoint(acc).time,
+    }
+
+    return render(request, 'tracker/player/last-update.html', context)

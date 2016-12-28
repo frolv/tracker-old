@@ -16,6 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* ID of the skill currently displayed in records table. */
+var recordSkillId = 0;
+
 $('#player-update').click(function(evt) {
     var player = document.location.pathname.substring(8);
 
@@ -32,7 +35,7 @@ $('#player-update').click(function(evt) {
         success: function(data) {
             if (data == '-1') {
                 $('#player-update-result').html('This player was updated less'
-                    + ' than 30s ago. Please wait.');
+                    + ' than 30s ago.<br>Please wait.');
             } else if (data == '-2') {
                 $('#player-update-result').html('Player ' + player
                     + ' not found on Hiscores.');
@@ -42,6 +45,12 @@ $('#player-update').click(function(evt) {
             } else {
                 $('#player-update-result').html('Player ' + player
                     + ' has been updated.');
+                updateRecords(recordSkillId);
+                updateSkillTable();
+                fetchUpdateTime();
+                setTimeout(function() {
+                    $('#player-update-result').html('');
+                }, 5000);
             }
         },
         failure: function(data) {
@@ -54,12 +63,8 @@ $(document).ready(function(evt) {
     $('[data-toggle="tooltip"]').tooltip();
 });
 
-$('.player-table-skill').click(function(evt) {
-    var skillid = this.id.substring(19)
+var updateRecords = function(skillid) {
     var match = document.location.pathname.match(/\/player\/(.*)\//);
-
-    $('.player-table-row').removeClass('active-row');
-    $('#player-table-row-' + skillid).addClass('active-row');
 
     $.ajax ({
         type: 'GET',
@@ -69,7 +74,7 @@ $('.player-table-skill').click(function(evt) {
             skill_id: skillid
         },
         success: function(data) {
-            if (data == '-1') {
+            if (data == '-2') {
             } else {
                 $('#player-records').html(data);
             }
@@ -77,6 +82,66 @@ $('.player-table-skill').click(function(evt) {
         failure: function(data) {
         }
     });
-});
+}
 
+/* Fetch HTML for player skill table from server and display it. */
+var updateSkillTable = function() {
+    var match = document.location.pathname.match(/\/player\/(.*)\/(.*)/);
+
+    $.ajax ({
+        type: 'GET',
+        url: '/tracker/skillstable',
+        data: {
+            player: match[1],
+            period: match[2] ? match[2] : 'week'
+        },
+        success: function(data) {
+            if (data == '-2') {
+            } else {
+                $('#player-skills-table-wrapper').html(data);
+                $('[data-toggle="tooltip"]').tooltip();
+                $('#player-table-row-' + recordSkillId).addClass('active-row');
+                setupRowListeners();
+            }
+        },
+        failure: function(data) {
+        }
+    });
+}
+
+var fetchUpdateTime = function() {
+    var match = document.location.pathname.match(/\/player\/(.*)\/(.*)/);
+
+    $.ajax ({
+        type: 'GET',
+        url: '/tracker/lastupdate',
+        data: {
+            player: match[1],
+        },
+        success: function(data) {
+            if (data == '-2') {
+            } else {
+                $('#player-last-update').html(data);
+            }
+        },
+        failure: function(data) {
+        }
+    });
+}
+
+/* Show records for a skill when its icon is clicked. */
+var setupRowListeners = function() {
+    $('.player-table-skill').click(function(evt) {
+        var skillid = parseInt(this.id.substring(19));
+
+        $('.player-table-row').removeClass('active-row');
+        $('#player-table-row-' + skillid).addClass('active-row');
+        recordSkillId = skillid;
+        updateRecords(skillid);
+    });
+}
+
+/* Skill 0 (overall) is active by default. */
 $('#player-table-row-0').addClass('active-row');
+
+setupRowListeners();
