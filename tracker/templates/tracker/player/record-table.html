@@ -1,29 +1,27 @@
-<div id="player-records">
-  <h4>{{ skillname }} records</h4>
-  <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-      <table class="table table-sm" id="player-record-table">
-        <tbody>
-          <tr>
-            <td>Day</td>
-            <td>{% firstof records.0 "0" %} xp</td>
-          </tr>
-          <tr>
-            <td>Week</td>
-            <td>{% firstof records.1 "0" %} xp</td>
-          </tr>
-          <tr>
-            <td>Month</td>
-            <td>{% firstof records.2 "0" %} xp</td>
-          </tr>
-          <tr>
-            <td>Year</td>
-            <td>{% firstof records.3 "0" %} xp</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-sm-2"></div>
+<h4>{{ skillname }} records</h4>
+<div class="row">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <table class="table table-sm" id="player-record-table">
+      <tbody>
+        <tr>
+          <td>Day</td>
+          <td>{% firstof records.0 "0" %} xp</td>
+        </tr>
+        <tr>
+          <td>Week</td>
+          <td>{% firstof records.1 "0" %} xp</td>
+        </tr>
+        <tr>
+          <td>Month</td>
+          <td>{% firstof records.2 "0" %} xp</td>
+        </tr>
+        <tr>
+          <td>Year</td>
+          <td>{% firstof records.3 "0" %} xp</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+  <div class="col-sm-2"></div>
 </div>

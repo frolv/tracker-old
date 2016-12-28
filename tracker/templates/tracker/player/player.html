@@ -69,7 +69,9 @@
       <p>Last updated at {{ lastupdate|date:"H:i:s T, M d Y" }}.</p>
       <a href="#" id="player-update">Update</a>
       <p id="player-update-result"></p>
-      {% include "tracker/player/record-table.html" %}
+      <div id="player-records">
+        {% include "tracker/player/record-table.html" %}
+      </div>
     </div>
 
   </div>
