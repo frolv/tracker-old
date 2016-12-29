@@ -23,3 +23,16 @@ body {
   width: 84px;
   border-radius: 0px;
 }
+
+#tracker-navbar .navbar-active {
+  background-color: #4c4c4c;
+}
+
+#tracker-navbar .navbar-active > a {
+  color: #bcbcbc;
+}
+
+#tracker-navbar .navbar-active > a:hover {
+  background-color: #585858;
+  color: #ffffff;
+}
