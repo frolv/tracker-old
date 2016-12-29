@@ -115,14 +115,16 @@ class Current(models.Model):
 class Record(models.Model):
     """
     Record experience gained by a player in a skill within a certain period.
-    Identical to Current; see it for more details.
+    Identical to Current, with addition of FIVE_MIN period; see it for details.
     """
 
+    FIVE_MIN = '5'
     DAY = 'D'
     WEEK = 'W'
     MONTH = 'M'
     YEAR = 'Y'
     PERIOD_CHOICES = (
+        (FIVE_MIN, 'Five minute'),
         (DAY, 'Day'),
         (WEEK, 'Week'),
         (MONTH, 'Month'),

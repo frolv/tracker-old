@@ -74,6 +74,8 @@ def track(username):
                            experience=exp, rank=int(fields[0]))
             s.save()
             update_current(acc, dp, s, periods)
+            if (periods[0] != None):
+                update_five_min(acc, dp, s, periods[0])
 
     print('Account %s has been updated.' % username)
     return dp
@@ -111,6 +113,9 @@ def update_current(acc, datapoint, sklvl, earliest):
         # Create dummy initial record entries.
         Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
                               start=datapoint, end=datapoint,
+                              experience=0, period=Record.FIVE_MIN)
+        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
+                              start=datapoint, end=datapoint,
                               experience=0, period=Record.DAY)
         Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
                               start=datapoint, end=datapoint,
@@ -127,13 +132,13 @@ def update_current(acc, datapoint, sklvl, earliest):
         # corresponding to the first datapoint in that time period and check if
         # the player has gained xp since then.
         if c.period == Current.DAY:
-            first = earliest[0]
-        elif c.period == Current.WEEK:
             first = earliest[1]
-        elif c.period == Current.MONTH:
+        elif c.period == Current.WEEK:
             first = earliest[2]
-        elif c.period == Current.YEAR:
+        elif c.period == Current.MONTH:
             first = earliest[3]
+        elif c.period == Current.YEAR:
+            first = earliest[4]
 
         if first != None:
             s = SkillLevel.objects.get(datapoint=first, skill_id=sklvl.skill_id)
@@ -158,18 +163,50 @@ def update_current(acc, datapoint, sklvl, earliest):
         c.save()
 
 
+def update_five_min(acc, datapoint, sklvl, first):
+    """
+    Check and update the five minute record for a player and skill.
+
+    Arguments:
+        acc (RSAccount) - player to update.
+        datapoint (DataPoint) - most recent data point for the player.
+        sklvl (SkillLevel) - SkillLevel entry at the above datapoint for the
+        skill to update.
+        first (DataPoint) - earliest data point for player within
+        five minutes of `datapoint`. Cannot be None.
+    """
+
+    s = SkillLevel.objects.get(datapoint=first, skill_id=sklvl.skill_id)
+    dx = sklvl.experience - s.experience
+    rec = Record.objects.get(rsaccount=acc, skill_id=sklvl.skill_id,
+                             period=Record.FIVE_MIN)
+
+    if dx > rec.experience:
+        rec.start = first
+        rec.end = datapoint
+        rec.experience = dx
+        rec.save()
+
+
 def get_period_firsts(acc):
     """
     Return an array of the earliest datapoints for account acc within each
     of the four periods: day, month, week and year.
+    An entry in the array can be None, indicating that a data point does not
+    exist within that period.
     """
+
     acc_dp = DataPoint.objects.filter(rsaccount=acc).order_by('time')
     points = []
     now = timezone.now()
 
+    # For five minute records
+    start = now - timedelta(seconds=300)
+    first = acc_dp.filter(time__gte=start).first()
+    points.append(first)
+
     for d in [1, 7, 31, 365]:
         start = now - timedelta(days=d)
-        # first can be None
         first = acc_dp.filter(time__gte=start).first()
         points.append(first)
 
