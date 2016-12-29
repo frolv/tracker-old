@@ -65,7 +65,7 @@
               data-container="body" title="{{ s.skillname }}">
             {% with i=forloop.counter0|stringformat:"s" %}
             {% with imgpath="img/skills/skill"|add:i|add:".png" %}
-            <img src="{% static imgpath %}"</img>
+            <img src="{% static imgpath %}"></img>
             {% endwith %}
             {% endwith %}
           </td>
