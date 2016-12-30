@@ -66,3 +66,19 @@ def player_records(acc, skill_id):
         rec.append('{:,}'.format(r.experience))
 
     return rec
+
+
+def record_overview(skill_id, period):
+
+    rec = []
+    top = Record.objects.filter(skill_id=skill_id, period=period) \
+                        .order_by('-experience')[:10]
+
+    for r in top:
+        if r.experience == 0:
+            break
+
+        name = r.rsaccount.username
+        rec.append((name, name.replace('_', ' '), '{:,}'.format(r.experience)))
+
+    return rec
