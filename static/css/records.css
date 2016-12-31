@@ -1,0 +1,28 @@
+.record-skills {
+  width: 800px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+
+.record-skill-icon {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  padding: 0px;
+  border: 0px;
+}
+
+.record-skill-icon a > img {
+  display: block;
+  margin: auto;
+}
+
+.record-table-wrapper {
+  margin-top: 10px;
+}
+
+.record-table td,
+.record-table th {
+  text-align: center;
+}
