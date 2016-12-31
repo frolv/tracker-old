@@ -1,0 +1,112 @@
+{% extends "tracker/hexistracker.html" %}
+
+{% comment %}
+ %
+ % tracker/templates/tracker/records/records.html
+ % Copyright (C) 2016 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static "css/records.css" %}">
+{% endblock %}
+
+{% block pagetitle %}
+<title>{{ skillname }} Records - Hexis Tracker</title>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  <div class="record-skills">
+    {% for s in skills %}
+      {% with i=forloop.counter0|stringformat:"s" %}
+      {% with imgpath="img/skills/skill"|add:i|add:".png" %}
+      <div class="record-skill-icon" data-toggle="tooltip"
+      data-placement="bottom"title="{{ s.skillname }}">
+        <a href="{{ i }}"><img src="{% static imgpath %}"></img></a>
+      </div>
+      {% endwith %}
+      {% endwith %}
+    {% endfor %}
+  </div>
+
+  <h3 class="text-center">{{ skillname }} Records</h3>
+
+  <div class="row">
+    <div class="col-md-1"></div>
+
+    <div class="col-md-4 record-table-wrapper" id="record-table-day">
+      {% with records=day_records period="day" %}
+        {% include "tracker/records/table.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4 record-table-wrapper" id="record-table-week">
+      {% with records=week_records period="week" %}
+        {% include "tracker/records/table.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="col-md-1"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-1"></div>
+
+    <div class="col-md-4 record-table-wrapper" id="record-table-month">
+      {% with records=month_records period="month" %}
+        {% include "tracker/records/table.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4 record-table-wrapper" id="record-table-year">
+      {% with records=year_records period="year" %}
+        {% include "tracker/records/table.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="col-md-1"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4"></div>
+
+    <div class="col-md-4 record-table-wrapper" id="record-table-5min">
+      {% with records=fivemin_records period="" %}
+        <h4 class="text-center"><b>Five Minute</b></h4>
+        {% include "tracker/records/table.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="col-md-4"></div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static "js/records.js" %}"></script>
+{% endblock %}

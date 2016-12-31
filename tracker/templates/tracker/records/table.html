@@ -1,0 +1,52 @@
+{% comment %}
+ %
+ % tracker/templates/tracker/records/table.html
+ % Copyright (C) 2016 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+{% if period != "" %}
+  <h4 class="text-center"><b>{{ period|title }}</b></h4>
+{% endif %}
+
+<table class="table record-table">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Player</th>
+      <th>Experience</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if not records %}
+      <tr>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>N/A</td>
+      <tr>
+    {% else %}
+      {% for r in records %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <a href="{{ "/player/"|add:r.0|add:"/"|add:period }}">{{ r.1 }}</a>
+          </td>
+          <td>{{ r.2 }}</td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
