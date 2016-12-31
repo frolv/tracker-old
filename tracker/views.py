@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 
-from tracker.models import RSAccount
+from tracker.models import RSAccount, Record
 from tracker.modules import accounttracker, osrsapi, template
 
 def index(request):
@@ -29,6 +29,7 @@ def index(request):
     """
 
     return render(request, 'tracker/index.html')
+
 
 def player(request, user, period='week'):
     """
@@ -67,6 +68,26 @@ def player(request, user, period='week'):
     }
 
     return render(request, 'tracker/player/player.html', context)
+
+
+def records(request, skill):
+    """
+    Records view for a given skill.
+    """
+
+    skill_id = int(skill)
+
+    context = {
+        'skills': accounttracker.skills(),
+        'skillname': accounttracker.skill_name(skill_id),
+        'day_records': template.record_overview(skill_id, Record.DAY),
+        'week_records': template.record_overview(skill_id, Record.WEEK),
+        'month_records': template.record_overview(skill_id, Record.MONTH),
+        'year_records': template.record_overview(skill_id, Record.YEAR),
+        'fivemin_records': template.record_overview(skill_id, Record.FIVE_MIN),
+    }
+
+    return render(request, 'tracker/records/records.html', context)
 
 
 def updateplayer(request):

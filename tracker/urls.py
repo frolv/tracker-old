@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^player/(?P<user>[a-zA-Z0-9_]+)/$', views.player, name='player'),
     url(r'^player/(?P<user>[a-zA-Z0-9_]+)/(?P<period>day|week|month|year)$', \
         views.player, name='player'),
+    url(r'^records/(?P<skill>(1?[0-9]|2[0-3]))$', views.records),
     url(r'^tracker/updateplayer$', views.updateplayer),
     url(r'^tracker/recordstable$', views.recordstable),
     url(r'^tracker/skillstable$', views.skillstable),
