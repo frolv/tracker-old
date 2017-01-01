@@ -241,6 +241,22 @@ def get_data_range(acc, period):
     return skillpoints
 
 
+def specific_data_range(acc, start, end):
+    """
+    Fetch all datapoints for player acc between the points with IDs start and
+    end, inclusive.
+    """
+
+    lst = DataPoint.objects.filter(rsaccount=acc, id__gte=start, id__lte=end) \
+                           .order_by('-time')
+    skillpoints = []
+    for point in lst:
+        sp = SkillLevel.objects.filter(datapoint=point).order_by('skill_id')
+        skillpoints.append((point, sp))
+
+    return skillpoints
+
+
 def latest_datapoint(acc):
     """
     Return the most recent datapoint for account acc.
