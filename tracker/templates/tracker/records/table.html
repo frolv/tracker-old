@@ -33,9 +33,7 @@
   <tbody>
     {% if not records %}
       <tr>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
+        <td colspan="3">No records exist</td>
       <tr>
     {% else %}
       {% for r in records %}
@@ -51,6 +49,9 @@
           {% endwith %}
         </tr>
       {% endfor %}
+      <tr>
+        <td colspan="3"><a href="{{ period }}"><b>...</b></a></td>
+      </tr>
     {% endif %}
   </tbody>
 </table>
