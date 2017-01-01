@@ -16,7 +16,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.template import loader
+
 from tracker.models import Skill, DataPoint, Record
+from tracker.modules import accounttracker
 
 # Set up an array of tuples to populate the rows in a player's skill table.
 # The first entry in each tuple is the difference in experience, the second
@@ -63,7 +66,12 @@ def player_records(acc, skill_id):
             r = Record.objects.get(rsaccount=acc, skill_id=skill_id, period=p)
         except Record.DoesNotExist:
             return []
-        rec.append('{:,}'.format(r.experience))
+
+        if r.experience == 0:
+            url = "#"
+        else:
+            url = "/player/%s/period/%d-%d" % (acc.username, r.start_id, r.end_id)
+        rec.append(('{:,}'.format(r.experience), url))
 
     return rec
 
@@ -79,6 +87,43 @@ def record_overview(skill_id, period):
             break
 
         name = r.rsaccount.username
-        rec.append((name, name.replace('_', ' '), '{:,}'.format(r.experience)))
+        rec.append((name, name.replace('_', ' '), '{:,}'.format(r.experience), \
+                    str(r.start_id), str(r.end_id)))
 
     return rec
+
+
+def player_page(acc, datapoints, period=''):
+    table_data = player_skill_table(datapoints)
+    firstupdate = accounttracker.first_datapoint(acc).time
+
+    if len(datapoints) == 0:
+        lastupdate = accounttracker.latest_datapoint(acc).time
+        skills = accounttracker.skills()
+        cs = None
+        ce = None
+    else:
+        lastupdate = datapoints[0][0].time
+        skills = None
+        cs = datapoints[-1][0].time
+        ce = lastupdate
+
+    records = player_records(acc, 0)
+    skillname = 'Overall'
+
+    t = loader.get_template('tracker/player/player.html')
+    context = {
+        'username': acc.username.replace('_', ' '),
+        'period': period,
+        'periods': ['day', 'week', 'month', 'year'],
+        'customstart': cs,
+        'customend': ce,
+        'table_data': table_data,
+        'table_skills': skills,
+        'firstupdate': firstupdate,
+        'lastupdate': lastupdate,
+        'records': records,
+        'skillname': skillname,
+    }
+
+    return t.render(context)
