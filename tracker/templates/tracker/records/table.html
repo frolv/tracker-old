@@ -40,11 +40,15 @@
     {% else %}
       {% for r in records %}
         <tr>
+          {% with p="/player/"|add:r.0|add:"/" %}
           <td>{{ forloop.counter }}</td>
           <td>
-            <a href="{{ "/player/"|add:r.0|add:"/"|add:period }}">{{ r.1 }}</a>
+            <a href="{{ p|add:period }}">{{ r.1 }}</a>
           </td>
-          <td>{{ r.2 }}</td>
+          <td>
+            <a href="{{ p|add:"period/"|add:r.3|add:"-"|add:r.4 }}">{{ r.2 }}</a>
+          </td>
+          {% endwith %}
         </tr>
       {% endfor %}
     {% endif %}

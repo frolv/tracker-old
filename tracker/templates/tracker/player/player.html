@@ -37,15 +37,29 @@
 
   <div class="row">
     <div class="player-skills col-md-8">
-      <h3 class="player-skills-name">Last {{ period }} for <b>{{ username }}</b></h3>
+      {% if period %}
+        <h3 class="player-skills-name">Last {{ period }} for <b>{{ username }}</b></h3>
+      {% else %}
+        <h3 class="player-skills-name">
+          Experience gained by <b>{{ username }}</b><br>
+        </h3>
+        <h4 class="player-skills-period">
+          between {{ customstart|date:"H:i:s, M d Y" }}
+          and {{ customend|date:"H:i:s, M d Y" }}
+        </h4>
+      {% endif %}
       <div id="player-period-buttons-wrapper">
         <div class="btn-group" id="player-period-buttons" role="group"
         aria-label="period-buttons">
           {% for p in periods %}
-            {% if p == period %}
-              <a class="btn btn-default active" href="{{ p }}">{{ p|title }}</a>
+            {% if period %}
+              {% if p == period %}
+                <a class="btn btn-default active" href="{{ p }}">{{ p|title }}</a>
+              {% else %}
+                <a class="btn btn-default" href="{{ p }}">{{ p|title}}</a>
+              {% endif %}
             {% else %}
-              <a class="btn btn-default" href="{{ p }}">{{ p|title}}</a>
+              <a class="btn btn-default" href="../{{ p }}">{{ p|title}}</a>
             {% endif %}
           {% endfor %}
         </div>
@@ -72,7 +86,9 @@
           {% include "tracker/player/last-update.html" %}
         </div>
       </div>
-      <a href="#" id="player-update">Update</a>
+      {% if period %}
+        <a href="#" id="player-update">Update</a>
+      {% endif %}
       <p id="player-update-result"></p>
       <div id="player-records">
         {% include "tracker/player/record-table.html" %}

@@ -6,19 +6,43 @@
       <tbody>
         <tr>
           <td>Day</td>
-          <td>{% firstof records.0 "0" %} xp</td>
+          <td>
+            {% if records.0.0 %}
+              <a href="{{ records.0.1 }}">{{ records.0.0 }} xp</a>
+            {% else %}
+              0 xp
+            {% endif %}
+          </td>
         </tr>
         <tr>
           <td>Week</td>
-          <td>{% firstof records.1 "0" %} xp</td>
+          <td>
+            {% if records.1.0 %}
+              <a href="{{ records.1.1 }}">{{ records.1.0 }} xp</a>
+            {% else %}
+              0 xp
+            {% endif %}
+          </td>
         </tr>
         <tr>
           <td>Month</td>
-          <td>{% firstof records.2 "0" %} xp</td>
+          <td>
+            {% if records.2.0 %}
+              <a href="{{ records.2.1 }}">{{ records.2.0 }} xp</a>
+            {% else %}
+              0 xp
+            {% endif %}
+          </td>
         </tr>
         <tr>
           <td>Year</td>
-          <td>{% firstof records.3 "0" %} xp</td>
+          <td>
+            {% if records.3.0 %}
+              <a href="{{ records.3.1 }}">{{ records.3.0 }} xp</a>
+            {% else %}
+              0 xp
+            {% endif %}
+          </td>
         </tr>
       </tbody>
     </table>

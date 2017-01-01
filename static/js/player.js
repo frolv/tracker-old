@@ -64,7 +64,7 @@ $(document).ready(function(evt) {
 });
 
 var updateRecords = function(skillid) {
-    var match = document.location.pathname.match(/\/player\/(.*)\//);
+    var match = document.location.pathname.match(/\/player\/(.*?)\//);
 
     $.ajax ({
         type: 'GET',

@@ -1,9 +1,13 @@
 .player-skills-name {
   text-align: center;
-  margin-bottom: 20px;
+}
+
+.player-skills-period {
+  text-align: center;
 }
 
 #player-period-buttons-wrapper {
+  margin-top: 20px;
   width: 100%;
 }
 

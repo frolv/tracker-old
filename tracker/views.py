@@ -17,8 +17,7 @@
 #
 
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
+from django.http import HttpResponse, HttpResponseBadRequest
 
 from tracker.models import RSAccount, Record
 from tracker.modules import accounttracker, osrsapi, template
@@ -42,32 +41,27 @@ def player(request, user, period='week'):
         return render(request, 'tracker/nottracked.html', {'username': user})
 
     datapoints = accounttracker.get_data_range(acc, period)
-    table_data = template.player_skill_table(datapoints)
-    firstupdate = accounttracker.first_datapoint(acc).time
+    return HttpResponse(template.player_page(acc, datapoints, period))
 
-    if len(datapoints) == 0:
-        lastupdate = accounttracker.latest_datapoint(acc).time
-        skills = accounttracker.skills()
-    else:
-        lastupdate = datapoints[0][0].time
-        skills = None
 
-    records = template.player_records(acc, 0)
-    skillname = 'Overall'
+def playerperiod(request, user, start, end):
+    """
+    Player view for experience in between the datapoints with IDs start and end.
+    """
 
-    context = {
-        'username': acc.username.replace('_', ' '),
-        'period': period,
-        'periods': ['day', 'week', 'month', 'year'],
-        'table_data': table_data,
-        'table_skills': skills,
-        'firstupdate': firstupdate,
-        'lastupdate': lastupdate,
-        'records': records,
-        'skillname': skillname,
-    }
+    try:
+        acc = RSAccount.objects.get(username__iexact=user)
+    except RSAccount.DoesNotExist:
+        return render(request, 'tracker/nottracked.html', {'username': user})
 
-    return render(request, 'tracker/player/player.html', context)
+    start_id = int(start)
+    end_id = int(end)
+
+    if start_id >= end_id:
+        return HttpResponseBadRequest()
+
+    datapoints = accounttracker.specific_data_range(acc, start, end)
+    return HttpResponse(template.player_page(acc, datapoints))
 
 
 def records(request, skill):
