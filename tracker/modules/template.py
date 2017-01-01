@@ -21,11 +21,14 @@ from django.template import loader
 from tracker.models import Skill, DataPoint, Record
 from tracker.modules import accounttracker
 
-# Set up an array of tuples to populate the rows in a player's skill table.
-# The first entry in each tuple is the difference in experience, the second
-# is difference in rank, third and fourth are total experience and rank,
-# respectively and the fifth is the name of the skill.
 def player_skill_table(datapoints):
+    """
+    Set up an array of tuples to populate the rows in a player's skill table.
+    The first entry in each tuple is the difference in experience, the second
+    is difference in rank, third and fourth are total experience and rank,
+    respectively and the fifth is the name of the skill.
+    """
+
     skills = Skill.objects.order_by('skill_id')
     table_data = []
 
@@ -59,6 +62,11 @@ def player_skill_table(datapoints):
 
 
 def player_records(acc, skill_id):
+    """
+    Set up an array of tuples to populate the small records table on a player
+    page for a specific skill.
+    """
+
     rec = []
 
     for p in 'DWMY':
@@ -77,6 +85,14 @@ def player_records(acc, skill_id):
 
 
 def record_overview(skill_id, period):
+    """
+    Set up an array of tuples to populate a single table on the records overview
+    page.
+
+    Arguments:
+    skill_id (int): the ID of the skill for which to look up records.
+    period (str): period for which to look up records.
+    """
 
     rec = []
     top = Record.objects.filter(skill_id=skill_id, period=period) \
@@ -94,6 +110,10 @@ def record_overview(skill_id, period):
 
 
 def player_page(acc, datapoints, period=''):
+    """
+    Return the HTML of the player page for a specific player and period.
+    """
+
     table_data = player_skill_table(datapoints)
     firstupdate = accounttracker.first_datapoint(acc).time
 
