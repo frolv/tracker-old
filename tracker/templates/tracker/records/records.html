@@ -54,7 +54,7 @@
 
     <div class="col-md-4 record-table-wrapper" id="record-table-day">
       {% with records=day_records period="day" %}
-        {% include "tracker/records/table.html" %}
+        {% include "tracker/records/mini-table.html" %}
       {% endwith %}
     </div>
 
@@ -62,7 +62,7 @@
 
     <div class="col-md-4 record-table-wrapper" id="record-table-week">
       {% with records=week_records period="week" %}
-        {% include "tracker/records/table.html" %}
+        {% include "tracker/records/mini-table.html" %}
       {% endwith %}
     </div>
 
@@ -74,7 +74,7 @@
 
     <div class="col-md-4 record-table-wrapper" id="record-table-month">
       {% with records=month_records period="month" %}
-        {% include "tracker/records/table.html" %}
+        {% include "tracker/records/mini-table.html" %}
       {% endwith %}
     </div>
 
@@ -82,7 +82,7 @@
 
     <div class="col-md-4 record-table-wrapper" id="record-table-year">
       {% with records=year_records period="year" %}
-        {% include "tracker/records/table.html" %}
+        {% include "tracker/records/mini-table.html" %}
       {% endwith %}
     </div>
 
@@ -95,7 +95,7 @@
     <div class="col-md-4 record-table-wrapper" id="record-table-5min">
       {% with records=fivemin_records period="" %}
         <h4 class="text-center"><b>Five Minute</b></h4>
-        {% include "tracker/records/table.html" %}
+        {% include "tracker/records/mini-table.html" %}
       {% endwith %}
     </div>
 
