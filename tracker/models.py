@@ -149,3 +149,13 @@ class Record(models.Model):
                                              self.experience, self.period,
                                              self.skill.skillname,
                                              self.start.time)
+
+    def str_to_period(s):
+        periods = {
+            'day': Record.DAY,
+            'week': Record.WEEK,
+            'month': Record.MONTH,
+            'year': Record.YEAR,
+            'fivemin': Record.FIVE_MIN,
+        }
+        return periods[s]
