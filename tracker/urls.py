@@ -22,13 +22,16 @@ import tracker.views as views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^player/(?P<user>[a-zA-Z0-9_]+)/$', views.player, name='player'),
-    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/(?P<period>day|week|month|year)$', \
+    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/(?P<period>day|week|month|year)$',
         views.player, name='player'),
-    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/period/(?P<start>\d+)-(?P<end>\d+)$', \
+    url(r'^player/(?P<user>[a-zA-Z0-9_]+)/period/(?P<start>\d+)-(?P<end>\d+)$',
         views.playerperiod),
     url(r'^records/(?P<skill>(1?[0-9]|2[0-3]))/$', views.records),
+    url(r'^records/(?P<skill>(1?[0-9]|2[0-3]))/(?P<period>day|week|month|year|fivemin)$',
+        views.recordsfull),
     url(r'^tracker/updateplayer$', views.updateplayer),
     url(r'^tracker/recordstable$', views.recordstable),
     url(r'^tracker/skillstable$', views.skillstable),
     url(r'^tracker/lastupdate$', views.lastupdate),
+    url(r'^tracker/searchperiod$', views.searchperiod),
 ]

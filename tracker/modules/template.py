@@ -84,19 +84,21 @@ def player_records(acc, skill_id):
     return rec
 
 
-def record_overview(skill_id, period):
+def record_table(skill_id, period, start=0, limit=10):
     """
-    Set up an array of tuples to populate a single table on the records overview
-    page.
+    Set up an array of tuples to populate a single table on a records page.
 
     Arguments:
     skill_id (int): the ID of the skill for which to look up records.
     period (str): period for which to look up records.
+    start (int): the index at which to begin.
+    limit (int): number of players to return.
     """
 
     rec = []
+    end = start + limit
     top = Record.objects.filter(skill_id=skill_id, period=period) \
-                        .order_by('-experience')[:10]
+                        .order_by('-experience')[start:end]
 
     for r in top:
         if r.experience == 0:
@@ -109,7 +111,7 @@ def record_overview(skill_id, period):
     return rec
 
 
-def player_page(acc, datapoints, period=''):
+def player_page(acc, datapoints, period, searchperiod):
     """
     Return the HTML of the player page for a specific player and period.
     """
@@ -144,6 +146,7 @@ def player_page(acc, datapoints, period=''):
         'lastupdate': lastupdate,
         'records': records,
         'skillname': skillname,
+        'searchperiod': searchperiod,
     }
 
     return t.render(context)

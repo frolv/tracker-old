@@ -38,10 +38,14 @@ def player(request, user, period='week'):
     try:
         acc = RSAccount.objects.get(username__iexact=user)
     except RSAccount.DoesNotExist:
-        return render(request, 'tracker/nottracked.html', {'username': user})
+        return render(request, 'tracker/nottracked.html', {
+            'username': user,
+            'searchperiod': get_searchperiod(request),
+        })
 
     datapoints = accounttracker.get_data_range(acc, period)
-    return HttpResponse(template.player_page(acc, datapoints, period))
+    return HttpResponse(template.player_page(acc, datapoints, period,
+                                             get_searchperiod(request)))
 
 
 def playerperiod(request, user, start, end):
@@ -61,27 +65,59 @@ def playerperiod(request, user, start, end):
         return HttpResponseBadRequest()
 
     datapoints = accounttracker.specific_data_range(acc, start, end)
-    return HttpResponse(template.player_page(acc, datapoints))
+    return HttpResponse(template.player_page(acc, datapoints, '',
+                                             get_searchperiod(request)))
 
 
 def records(request, skill):
     """
-    Records view for a given skill.
+    Records overview for a given skill.
     """
 
     skill_id = int(skill)
-
     context = {
         'skills': accounttracker.skills(),
         'skillname': accounttracker.skill_name(skill_id),
-        'day_records': template.record_overview(skill_id, Record.DAY),
-        'week_records': template.record_overview(skill_id, Record.WEEK),
-        'month_records': template.record_overview(skill_id, Record.MONTH),
-        'year_records': template.record_overview(skill_id, Record.YEAR),
-        'fivemin_records': template.record_overview(skill_id, Record.FIVE_MIN),
+        'day_records': template.record_table(skill_id, Record.DAY),
+        'week_records': template.record_table(skill_id, Record.WEEK),
+        'month_records': template.record_table(skill_id, Record.MONTH),
+        'year_records': template.record_table(skill_id, Record.YEAR),
+        'fivemin_records': template.record_table(skill_id, Record.FIVE_MIN),
+        'searchperiod': get_searchperiod(request),
     }
 
     return render(request, 'tracker/records/records.html', context)
+
+
+def recordsfull(request, skill, period):
+    """
+    Full table of records for a specific skill.
+    """
+
+    periods = {
+        'day': Record.DAY,
+        'week': Record.WEEK,
+        'month': Record.MONTH,
+        'year': Record.YEAR,
+        'fivemin': Record.FIVE_MIN,
+    }
+
+    skill_id = int(skill)
+    p = periods[period]
+    start = 0
+
+    if period == 'fivemin':
+        period = ''
+
+    context = {
+        'skillname': accounttracker.skill_name(skill_id),
+        'period': period,
+        'start': start,
+        'records': template.record_table(skill_id, p, start, 25),
+        'searchperiod': get_searchperiod(request),
+    }
+
+    return render(request, 'tracker/records/full-table.html', context)
 
 
 def updateplayer(request):
@@ -172,3 +208,17 @@ def lastupdate(request):
     }
 
     return render(request, 'tracker/player/last-update.html', context)
+
+
+def searchperiod(request):
+    if (request.method == 'POST'):
+        request.session['searchperiod'] = request.POST['searchperiod']
+
+    return HttpResponse('OK')
+
+
+def get_searchperiod(request):
+    if request.session['searchperiod']:
+        return request.session['searchperiod']
+    else:
+        return 'week'

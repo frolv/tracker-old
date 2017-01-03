@@ -38,10 +38,10 @@
     {% for s in skills %}
       {% with i=forloop.counter0|stringformat:"s" %}
       {% with imgpath="img/skills/skill"|add:i|add:".png" %}
-      <div class="record-skill-icon" data-toggle="tooltip"
-      data-placement="bottom" title="{{ s.skillname }}">
-        <a href="../{{ i }}/"><img src="{% static imgpath %}"></img></a>
-      </div>
+        <div class="record-skill-icon" data-toggle="tooltip"
+        data-placement="bottom" title="{{ s.skillname }}">
+          <a href="../{{ i }}/"><img src="{% static imgpath %}"></img></a>
+        </div>
       {% endwith %}
       {% endwith %}
     {% endfor %}

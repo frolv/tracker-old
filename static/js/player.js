@@ -26,7 +26,7 @@ $('#player-update').click(function(evt) {
     if (i != -1)
         player = player.substring(0, i);
 
-    $.ajax ({
+    $.ajax({
         type: 'GET',
         url: '/tracker/updateplayer',
         data: {

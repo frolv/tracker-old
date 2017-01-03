@@ -40,4 +40,15 @@ $('.search-period-dropdown').click(function(evt) {
 
     $('#search-period').html(period.charAt(0).toUpperCase() + period.slice(1)
         + ' <span class="caret"></span>');
+
+    $.ajax({
+        type: 'POST',
+        url: '/tracker/searchperiod',
+        beforeSend: function(req) {
+            req.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+        },
+        data: {
+            searchperiod: period
+        }
+    });
 });
