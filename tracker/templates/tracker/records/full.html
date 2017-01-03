@@ -1,0 +1,85 @@
+{% extends "tracker/hexistracker.html" %}
+
+{% comment %}
+ %
+ % tracker/templates/tracker/records/records.html
+ % Copyright (C) 2016-2017 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static "css/full-table-records.css" %}">
+<link rel="stylesheet" href="{% static "css/records.css" %}">
+{% endblock %}
+
+{% block pagetitle %}
+{% if period %}
+  <title>{{ skillname }} {{ period|title }} Records - Hexis Tracker</title>
+{% else %}
+  <title>{{ skillname }} Five Minute Records - Hexis Tracker</title>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  {% if period %}
+    <h3 id="record-title">{{ skillname }} {{ period|title }} Records</h3>
+  {% else %}
+    <h3 id="record-title">{{ skillname }} Five Minute Records</h3>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8" id="record-fulltable-wrapper">
+      {% include "tracker/records/full-table.html" %}
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    {% if not records or start == 0 %}
+      <button class="col-md-3 btn btn-primary" id="record-prev-button" disabled>
+        Previous Page
+      </button>
+    {% else %}
+      <button class="col-md-3 btn btn-primary" id="record-prev-button">
+        Previous Page
+      </button>
+    {% endif %}
+    <div class="col-md-2"></div>
+    {% if not records or records|length < 25 %}
+      <button class="col-md-3 btn btn-primary" id="record-next-button" disabled>
+        Next Page
+      </button>
+    {% else %}
+      <button class="col-md-3 btn btn-primary" id="record-next-button">
+        Next Page
+      </button>
+    {% endif %}
+    <div class="col-md-2"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/records-full.js" %}"></script>
+{% endblock %}
