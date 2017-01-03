@@ -1,30 +1,60 @@
-<table class="table record-table full-record-table">
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Player</th>
-      <th>Experience</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% if not records %}
-      <tr>
-        <td id="no-records" colspan="3">No records exist</td>
-      <tr>
-    {% else %}
-      {% for r in records %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <table class="table record-table full-record-table">
+      <thead>
         <tr>
-          {% with p="/player/"|add:r.0 %}
-            <td>{{ forloop.counter|add:start }}</td>
-            <td>
-              <a href="{{ p }}/{{ period }}">{{ r.1 }}</a>
-            </td>
-            <td>
-              <a href="{{ p }}/period/{{ r.3 }}-{{ r.4 }}">{{ r.2 }}</a>
-            </td>
-          {% endwith %}
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Experience</th>
         </tr>
-      {% endfor %}
-    {% endif %}
-  </tbody>
-</table>
+      </thead>
+      <tbody>
+        {% if not records %}
+          <tr>
+            <td id="no-records" colspan="3">No records exist</td>
+          <tr>
+        {% else %}
+          {% for r in records %}
+            <tr>
+              {% with p="/player/"|add:r.0 %}
+                <td>{{ forloop.counter|add:start }}</td>
+                <td>
+                  <a href="{{ p }}/{{ period }}">{{ r.1 }}</a>
+                </td>
+                <td>
+                  <a href="{{ p }}/period/{{ r.3 }}-{{ r.4 }}">{{ r.2 }}</a>
+                </td>
+              {% endwith %}
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+  <div class="col-md-2"></div>
+  {% if not records or start == 0 %}
+    <button class="col-md-3 btn btn-primary" id="record-prev-button" disabled>
+      Previous Page
+    </button>
+  {% else %}
+    <button class="col-md-3 btn btn-primary" id="record-prev-button">
+      Previous Page
+    </button>
+  {% endif %}
+  <div class="col-md-2"></div>
+  {% if not records or records|length < 25 %}
+    <button class="col-md-3 btn btn-primary" id="record-next-button" disabled>
+      Next Page
+    </button>
+  {% else %}
+    <button class="col-md-3 btn btn-primary" id="record-next-button">
+      Next Page
+    </button>
+  {% endif %}
+  <div class="col-md-2"></div>
+</div>

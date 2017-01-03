@@ -45,36 +45,8 @@
     <h3 id="record-title">{{ skillname }} Five Minute Records</h3>
   {% endif %}
 
-  <div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8" id="record-fulltable-wrapper">
-      {% include "tracker/records/full-table.html" %}
-    </div>
-    <div class="col-md-2"></div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-2"></div>
-    {% if not records or start == 0 %}
-      <button class="col-md-3 btn btn-primary" id="record-prev-button" disabled>
-        Previous Page
-      </button>
-    {% else %}
-      <button class="col-md-3 btn btn-primary" id="record-prev-button">
-        Previous Page
-      </button>
-    {% endif %}
-    <div class="col-md-2"></div>
-    {% if not records or records|length < 25 %}
-      <button class="col-md-3 btn btn-primary" id="record-next-button" disabled>
-        Next Page
-      </button>
-    {% else %}
-      <button class="col-md-3 btn btn-primary" id="record-next-button">
-        Next Page
-      </button>
-    {% endif %}
-    <div class="col-md-2"></div>
+  <div id="record-fulltable-wrapper">
+    {% include "tracker/records/full-table.html" %}
   </div>
 </div>
 

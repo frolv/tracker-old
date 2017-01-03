@@ -27,7 +27,9 @@ def index(request):
     Tracker main page view.
     """
 
-    return render(request, 'tracker/index.html')
+    return render(request, 'tracker/index.html', {
+        'searchperiod': get_searchperiod(request)
+    })
 
 
 def player(request, user, period='week'):
@@ -94,16 +96,8 @@ def recordsfull(request, skill, period):
     Full table of records for a specific skill.
     """
 
-    periods = {
-        'day': Record.DAY,
-        'week': Record.WEEK,
-        'month': Record.MONTH,
-        'year': Record.YEAR,
-        'fivemin': Record.FIVE_MIN,
-    }
-
     skill_id = int(skill)
-    p = periods[period]
+    p = Record.str_to_period(period)
     start = 0
 
     if period == 'fivemin':
@@ -117,7 +111,7 @@ def recordsfull(request, skill, period):
         'searchperiod': get_searchperiod(request),
     }
 
-    return render(request, 'tracker/records/full-table.html', context)
+    return render(request, 'tracker/records/full.html', context)
 
 
 def updateplayer(request):
@@ -162,6 +156,31 @@ def recordstable(request):
     }
 
     return render(request, 'tracker/player/record-table.html', context)
+
+
+def fullrecords(request):
+    """
+    Record table HTML for a given player and skill.
+    """
+
+    if (request.method != 'GET'):
+        return HttpResponseBadRequest()
+
+    try:
+        skill_id = int(request.GET['skill'])
+        period = request.GET['period']
+        start = int(request.GET['after'])
+        p = Record.str_to_period(period)
+    except KeyError:
+        return HttpResponseBadRequest()
+
+    context = {
+        'period': period,
+        'start': start,
+        'records': template.record_table(skill_id, p, start, 25),
+    }
+
+    return render(request, 'tracker/records/full-table.html', context)
 
 
 def skillstable(request):
@@ -218,7 +237,8 @@ def searchperiod(request):
 
 
 def get_searchperiod(request):
-    if request.session['searchperiod']:
+    try:
         return request.session['searchperiod']
-    else:
-        return 'week'
+    except KeyError:
+        request.session['searchperiod'] = 'week'
+        return request.session['searchperiod']

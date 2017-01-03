@@ -31,6 +31,7 @@ urlpatterns = [
         views.recordsfull),
     url(r'^tracker/updateplayer$', views.updateplayer),
     url(r'^tracker/recordstable$', views.recordstable),
+    url(r'^tracker/fullrecords$', views.fullrecords),
     url(r'^tracker/skillstable$', views.skillstable),
     url(r'^tracker/lastupdate$', views.lastupdate),
     url(r'^tracker/searchperiod$', views.searchperiod),
