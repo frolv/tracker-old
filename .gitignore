@@ -1,4 +1,3 @@
-manage.py
 hexistracker/settings_local.py
 tracker/migrations
 static/lib
