@@ -38,23 +38,15 @@
 <div class="row">
   <div class="col-md-2"></div>
   {% if not records or start == 0 %}
-    <button class="col-md-3 btn btn-primary" id="record-prev-button" disabled>
-      Previous Page
-    </button>
+    <a class="col-md-3 btn btn-primary disabled" href="#">Previous Page</a>
   {% else %}
-    <button class="col-md-3 btn btn-primary" id="record-prev-button">
-      Previous Page
-    </button>
+    <a class="col-md-3 btn btn-primary" href="{{ page|add:-1 }}">Previous Page</a>
   {% endif %}
   <div class="col-md-2"></div>
   {% if not records or records|length < 25 %}
-    <button class="col-md-3 btn btn-primary" id="record-next-button" disabled>
-      Next Page
-    </button>
+    <a class="col-md-3 btn btn-primary disabled" href="#">Next Page</a>
   {% else %}
-    <button class="col-md-3 btn btn-primary" id="record-next-button">
-      Next Page
-    </button>
+    <a class="col-md-3 btn btn-primary" href="{{ page|add:1 }}">Next Page</a>
   {% endif %}
   <div class="col-md-2"></div>
 </div>

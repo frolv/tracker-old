@@ -91,14 +91,14 @@ def records(request, skill):
     return render(request, 'tracker/records/records.html', context)
 
 
-def recordsfull(request, skill, period):
+def recordsfull(request, skill, period, page=1):
     """
     Full table of records for a specific skill.
     """
 
     skill_id = int(skill)
     p = Record.str_to_period(period)
-    start = 0
+    start = (int(page) - 1) * 25
 
     if period == 'fivemin':
         period = ''
@@ -107,6 +107,7 @@ def recordsfull(request, skill, period):
         'skillname': accounttracker.skill_name(skill_id),
         'period': period,
         'start': start,
+        'page': page,
         'records': template.record_table(skill_id, p, start, 25),
         'searchperiod': get_searchperiod(request),
     }
@@ -156,31 +157,6 @@ def recordstable(request):
     }
 
     return render(request, 'tracker/player/record-table.html', context)
-
-
-def fullrecords(request):
-    """
-    Record table HTML for a given player and skill.
-    """
-
-    if (request.method != 'GET'):
-        return HttpResponseBadRequest()
-
-    try:
-        skill_id = int(request.GET['skill'])
-        period = request.GET['period']
-        start = int(request.GET['after'])
-        p = Record.str_to_period(period)
-    except KeyError:
-        return HttpResponseBadRequest()
-
-    context = {
-        'period': period,
-        'start': start,
-        'records': template.record_table(skill_id, p, start, 25),
-    }
-
-    return render(request, 'tracker/records/full-table.html', context)
 
 
 def skillstable(request):
