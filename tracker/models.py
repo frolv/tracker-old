@@ -159,3 +159,16 @@ class Record(models.Model):
             'fivemin': Record.FIVE_MIN,
         }
         return periods[s]
+
+
+class SkillRate(models.Model):
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, db_index=True)
+    start_exp = models.IntegerField()
+    rate = models.IntegerField()
+
+    class Meta:
+        unique_together = (( 'skill', 'start_exp' ))
+
+    def __str__(self):
+        return '%s: %d exp/h at %d exp' % (self.skill.skillname,
+                                           self.rate, self.start_exp)
