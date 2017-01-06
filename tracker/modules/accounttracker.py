@@ -284,6 +284,27 @@ def skill_name(skill_id):
     return name
 
 
+def calculate_hours(skill_id, experience):
+    """
+    Calculate the number of hours played in a skill given an amount of
+    experience.
+    """
+
+    rates = SkillRate.objects.filter(skill_id=skill_id).order_by('-start_exp')
+    hours = 0
+
+    for r in rates:
+        if experience <= r.start_exp:
+            continue
+
+        diff = experience - r.start_exp
+        if r.rate != 0:
+            hours += diff / r.rate
+        experience = r.start_exp
+
+    return hours
+
+
 class RecentUpdateError(Exception):
     pass
 
