@@ -76,10 +76,10 @@ Vagrant.configure(2) do |config|
      virtualenv -p /usr/bin/python3.5 env --always-copy
      source env/bin/activate
      pip install -r requirements/base.txt
-     echo 'cd /vagrant' >> ~/.bashrc
-     echo 'source env/bin/activate' >> ~/.bashrc
-     echo "alias manage='python manage.py'" >> ~/.bashrc
-     echo "alias runserver='manage runserver 0.0.0.0:8000'" >> ~/.bashrc
+     echo 'cd /vagrant' >> /home/vagrant/.bashrc
+     echo 'source env/bin/activate' >> /home/vagrant/.bashrc
+     echo "alias manage='python manage.py'" >> /home/vagrant/.bashrc
+     echo "alias runserver='manage runserver 0.0.0.0:8000'" >> /home/vagrant/.bashrc
 
      sudo -u postgres psql -c "CREATE DATABASE hexistracking;"
      sudo -u postgres psql -c "CREATE USER tracker WITH PASSWORD 'insecurepassword';"
