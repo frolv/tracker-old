@@ -62,16 +62,18 @@ class SkillLevel(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
                                   db_index=True)
     experience = models.BigIntegerField()
     rank = models.IntegerField()
+    current_hours = models.FloatField()
+    original_hours = models.FloatField()
 
     class Meta:
         unique_together = (( 'skill', 'datapoint' ))
 
     def __str__(self):
-        return '%d: %d, %d' % (self.skill_id, self.experience, self.rank)
+        return '%s: %d, %d' % (self.skill.skillname, self.experience, self.rank)
 
 
 class Current(models.Model):
