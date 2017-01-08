@@ -38,9 +38,11 @@ def track(username):
 
     try:
         acc = RSAccount.objects.get(username__iexact=username)
+        first = False
     except RSAccount.DoesNotExist:
         print('Tracking %s for the first time.' % username)
         acc = RSAccount(username=username)
+        first = True
 
     # Check if the user has been updated recently.
     try:
@@ -53,14 +55,16 @@ def track(username):
 
     # Of course, we want the whole datapoint to be added atomically.
     with transaction.atomic():
-        # Add the account if a new one was created.
         acc.save()
-
-        periods = get_period_firsts(acc)
 
         dp = DataPoint(rsaccount=acc)
         dp.save()
 
+        # Create current and record entries first time account is tracked.
+        if first:
+            create_records(acc, dp)
+
+        periods = get_period_firsts(acc)
         skills = hiscore_lookup(username)
         total_hours = 0
 
@@ -108,36 +112,6 @@ def update_current(acc, datapoint, sklvl, earliest):
     """
 
     curr = Current.objects.filter(rsaccount=acc, skill_id=sklvl.skill_id)
-
-    # Account is being tracked for the first time, create current and
-    # record objects.
-    if len(curr) == 0:
-        curr = []
-        curr.append(Current(rsaccount=acc, skill_id=sklvl.skill_id,
-                            period=Current.DAY))
-        curr.append(Current(rsaccount=acc, skill_id=sklvl.skill_id,
-                            period=Current.WEEK))
-        curr.append(Current(rsaccount=acc, skill_id=sklvl.skill_id,
-                            period=Current.MONTH))
-        curr.append(Current(rsaccount=acc, skill_id=sklvl.skill_id,
-                            period=Current.YEAR))
-
-        # Create dummy initial record entries.
-        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.FIVE_MIN)
-        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.DAY)
-        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.WEEK)
-        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.MONTH)
-        Record.objects.create(rsaccount=acc, skill_id=sklvl.skill_id,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.YEAR)
 
     for c in curr:
         # For each Current entry, find the entry for the same skill
@@ -223,6 +197,43 @@ def get_period_firsts(acc):
         points.append(first)
 
     return points
+
+
+def create_records(acc, datapoint):
+    """
+    Create Current and Record database entries for a newly tracked account.
+    """
+
+    skills = Skill.objects.order_by('skill_id')
+    for s in skills:
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.DAY)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.WEEK)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.MONTH)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.YEAR)
+
+        Record.objects.create(rsaccount=acc, skill=s,
+                              start=datapoint, end=datapoint,
+                              experience=0, period=Record.FIVE_MIN)
+        Record.objects.create(rsaccount=acc, skill=s,
+                              start=datapoint, end=datapoint,
+                              experience=0, period=Record.DAY)
+        Record.objects.create(rsaccount=acc, skill=s,
+                              start=datapoint, end=datapoint,
+                              experience=0, period=Record.WEEK)
+        Record.objects.create(rsaccount=acc, skill=s,
+                              start=datapoint, end=datapoint,
+                              experience=0, period=Record.MONTH)
+        Record.objects.create(rsaccount=acc, skill=s,
+                              start=datapoint, end=datapoint,
+                              experience=0, period=Record.YEAR)
 
 
 def get_data_range(acc, period):
