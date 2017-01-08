@@ -35,9 +35,10 @@ class DataPoint(models.Model):
     """
 
     id = models.BigAutoField(primary_key=True)
-    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE,
                                   db_index=True)
-    time = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
+    time = models.DateTimeField(auto_now_add=True, editable=False,
+                                db_index=True)
 
     def __str__(self):
         return 'Datapoint: %s at %s' % (str(self.rsaccount), str(self.time))
@@ -50,6 +51,10 @@ class Skill(models.Model):
 
     skill_id = models.PositiveSmallIntegerField(primary_key=True)
     skillname = models.CharField(max_length=16)
+
+    # Skill IDs for QHA and Original QHA
+    QHA_ID = 99
+    ORIG_QHA_ID = 100
 
     def __str__(self):
         return '%d %s' % (self.skill_id, self.skillname)
@@ -94,12 +99,12 @@ class Current(models.Model):
         (YEAR, 'Year'),
     )
 
-    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE,
                                   db_index=True)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
                               db_index=True, related_name='+')
-    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
                             db_index=True, related_name='+')
     experience = models.BigIntegerField(db_index=True)
     period = models.CharField(max_length=1, choices=PERIOD_CHOICES, db_index=True)
@@ -133,12 +138,12 @@ class Record(models.Model):
         (YEAR, 'Year'),
     )
 
-    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE, \
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE,
                                   db_index=True)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+    start = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
                               db_index=True, related_name='+')
-    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE, \
+    end = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
                             db_index=True, related_name='+')
     experience = models.BigIntegerField(db_index=True)
     period = models.CharField(max_length=1, choices=PERIOD_CHOICES, db_index=True)
@@ -167,6 +172,7 @@ class SkillRate(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, db_index=True)
     start_exp = models.IntegerField()
     rate = models.IntegerField()
+    explanation = models.CharField(max_length=128, default='')
 
     class Meta:
         unique_together = (( 'skill', 'start_exp' ))
