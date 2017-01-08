@@ -62,7 +62,10 @@ def track(username):
         dp.save()
 
         skills = hiscore_lookup(username)
-        for i in range(len(skills)):
+        total_hours = 0
+
+        i = len(skills) - 1
+        while i >= 0:
             fields = skills[i].split(',')
 
             if (fields[2] == '-1'):
@@ -70,12 +73,21 @@ def track(username):
             else:
                 exp = int(fields[2])
 
-            s = SkillLevel(skill_id=i, datapoint=dp, \
-                           experience=exp, rank=int(fields[0]))
+            if i == 0:
+                hours = total_hours
+            else:
+                hours = calculate_hours(i, exp)
+                total_hours += hours
+
+            s = SkillLevel(skill_id=i, datapoint=dp,
+                           experience=exp, rank=int(fields[0]),
+                           current_hours=hours, original_hours=hours)
             s.save()
             update_current(acc, dp, s, periods)
             if (periods[0] != None):
                 update_five_min(acc, dp, s, periods[0])
+
+            i -= 1
 
     print('Account %s has been updated.' % username)
     return dp
