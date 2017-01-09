@@ -206,18 +206,19 @@ def create_records(acc, datapoint):
 
     skills = Skill.objects.order_by('skill_id')
     for s in skills:
-        Current.objects.create(rsaccount=acc, skill=s,
-                               start=datapoint, end=datapoint,
-                               experience=0, period=Current.DAY)
-        Current.objects.create(rsaccount=acc, skill=s,
-                               start=datapoint, end=datapoint,
-                               experience=0, period=Current.WEEK)
-        Current.objects.create(rsaccount=acc, skill=s,
-                               start=datapoint, end=datapoint,
-                               experience=0, period=Current.MONTH)
-        Current.objects.create(rsaccount=acc, skill=s,
-                               start=datapoint, end=datapoint,
-                               experience=0, period=Current.YEAR)
+        if s.skill_id != Skill.ORIG_QHA_ID:
+            Current.objects.create(rsaccount=acc, skill=s,
+                                   start=datapoint, end=datapoint,
+                                   experience=0, period=Current.DAY)
+            Current.objects.create(rsaccount=acc, skill=s,
+                                   start=datapoint, end=datapoint,
+                                   experience=0, period=Current.WEEK)
+            Current.objects.create(rsaccount=acc, skill=s,
+                                   start=datapoint, end=datapoint,
+                                   experience=0, period=Current.MONTH)
+            Current.objects.create(rsaccount=acc, skill=s,
+                                   start=datapoint, end=datapoint,
+                                   experience=0, period=Current.YEAR)
 
         Record.objects.create(rsaccount=acc, skill=s,
                               start=datapoint, end=datapoint,
@@ -295,7 +296,10 @@ def first_datapoint(acc):
 
 
 def skills():
-    return Skill.objects.order_by('skill_id')
+    """
+    Return set of Skill objects for all in-game skills.
+    """
+    return Skill.objects.filter(skill_id__lte=24).order_by('skill_id')
 
 
 def skill_name(skill_id):
