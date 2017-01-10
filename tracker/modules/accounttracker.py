@@ -131,10 +131,12 @@ def update_current(acc, datapoint, sklvl, earliest):
             c.start = first
             c.end = datapoint
             c.experience = sklvl.experience - s.experience
+            c.hours = sklvl.current_hours - s.current_hours
         else:
             c.start = datapoint
             c.end = datapoint
             c.experience = 0
+            c.hours = 0
 
         # Now, check if their current xp beats their record for the given skill
         # and time period. Update record if so.
@@ -144,8 +146,16 @@ def update_current(acc, datapoint, sklvl, earliest):
             rec.start = c.start
             rec.end = c.end
             rec.experience = c.experience
-            rec.save()
+        if c.hours > rec.current_hours:
+            rec.start = c.start
+            rec.end = c.end
+            rec.current_hours = c.hours
+        if c.hours > rec.original_hours:
+            rec.start = c.start
+            rec.end = c.end
+            rec.original_hours = c.hours
 
+        rec.save()
         c.save()
 
 
@@ -164,6 +174,12 @@ def update_five_min(acc, datapoint, sklvl, first):
 
     s = SkillLevel.objects.get(datapoint=first, skill_id=sklvl.skill_id)
     dx = sklvl.experience - s.experience
+    dh = sklvl.current_hours - s.current_hours
+
+    # Prevent floating point arithmetic errors
+    if dh < 0.01:
+        dh = 0
+
     rec = Record.objects.get(rsaccount=acc, skill_id=sklvl.skill_id,
                              period=Record.FIVE_MIN)
 
@@ -171,7 +187,16 @@ def update_five_min(acc, datapoint, sklvl, first):
         rec.start = first
         rec.end = datapoint
         rec.experience = dx
-        rec.save()
+    if dh > rec.current_hours:
+        rec.start = first
+        rec.end = datapoint
+        rec.current_hours = dh
+    if dh > rec.original_hours:
+        rec.start = first
+        rec.end = datapoint
+        rec.original_hours = dh
+
+    rec.save()
 
 
 def get_period_firsts(acc):
@@ -206,19 +231,18 @@ def create_records(acc, datapoint):
 
     skills = Skill.objects.order_by('skill_id')
     for s in skills:
-        if s.skill_id != Skill.ORIG_QHA_ID:
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.DAY)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.WEEK)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.MONTH)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.YEAR)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.DAY)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.WEEK)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.MONTH)
+        Current.objects.create(rsaccount=acc, skill=s,
+                               start=datapoint, end=datapoint,
+                               experience=0, period=Current.YEAR)
 
         Record.objects.create(rsaccount=acc, skill=s,
                               start=datapoint, end=datapoint,
@@ -299,7 +323,7 @@ def skills():
     """
     Return set of Skill objects for all in-game skills.
     """
-    return Skill.objects.filter(skill_id__lte=24).order_by('skill_id')
+    return Skill.objects.order_by('skill_id')
 
 
 def skill_name(skill_id):
