@@ -52,6 +52,10 @@ class Skill(models.Model):
     skill_id = models.PositiveSmallIntegerField(primary_key=True)
     skillname = models.CharField(max_length=16)
 
+    # Skill IDs for QHA and Original QHA
+    QHA_ID = 99
+    ORIG_QHA_ID = 100
+
     def __str__(self):
         return '%d %s' % (self.skill_id, self.skillname)
 
@@ -144,8 +148,7 @@ class Record(models.Model):
                             db_index=True, related_name='+')
     experience = models.BigIntegerField(db_index=True)
     period = models.CharField(max_length=1, choices=PERIOD_CHOICES, db_index=True)
-    current_hours = models.FloatField()
-    original_hours = models.FloatField()
+    hours = models.FloatField()
 
     class Meta:
         unique_together = (( 'rsaccount', 'skill', 'period' ))
