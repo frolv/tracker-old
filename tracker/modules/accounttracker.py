@@ -18,6 +18,7 @@
 
 import re
 from django.db import transaction
+from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
 
@@ -376,6 +377,14 @@ def calculate_hours(skill_id, experience):
     """
 
     rates = SkillRate.objects.filter(skill_id=skill_id).order_by('-start_exp')
+    return __calculate_hours(rates, experience)
+
+
+def __calculate_hours(rates, experience):
+    """
+    Calculate hours played using given experience rates and experience.
+    """
+
     hours = 0
 
     for r in rates:
@@ -388,6 +397,140 @@ def calculate_hours(skill_id, experience):
         experience = r.start_exp
 
     return hours
+
+
+def recalculate_hours(modified_skills, **kwargs):
+    """
+    Recalculate hours played for each skill ID in `modified_skills`
+    for every datapoint in the database.
+
+    This function takes a very long time to complete and should only be used
+    after all desired changes to experience rates are made.
+    """
+
+    try:
+        orig = kwargs['recalc_orig']
+    except KeyError:
+        orig = False
+
+    if 0 in modified_skills:
+        modified_skills.remove(0)
+
+    Current.objects.filter(skill_id=Skill.QHA_ID).update(hours=0)
+    Record.objects.filter(skill_id=Skill.QHA_ID).update(hours=0)
+
+    if orig:
+        Record.objects.filter(skill_id=Skill.ORIG_QHA_ID).update(hours=0)
+
+    rates = []
+    all_skills = skills()
+    for s in all_skills:
+        rates.append(SkillRate.objects.filter(skill=s).order_by('-start_exp'))
+
+    for acc in RSAccount.objects.all():
+        recalculate_single(acc, modified_skills, rates, orig)
+
+
+def recalculate_single(acc, modified_skills, rates, orig):
+    """
+    Recalculate hours played for all datapoints belonging to player `acc`
+    for each skill ID in `modified_skills`, and update player's QHA records.
+    """
+
+    points = DataPoint.objects.filter(rsaccount=acc)
+    rec = Record.objects.filter(rsaccount=acc, skill_id=Skill.QHA_ID)
+
+    records = [
+        [rec.get(period=Record.FIVE_MIN), None],
+        [rec.get(period=Record.DAY), None],
+        [rec.get(period=Record.WEEK), None],
+        [rec.get(period=Record.MONTH), None],
+        [rec.get(period=Record.YEAR), None],
+    ]
+
+    if orig:
+        orec = Record.objects.filter(rsaccount=acc, skill_id=Skill.ORIG_QHA_ID)
+        records[0][1] = orec.get(period=Record.FIVE_MIN)
+        records[1][1] = orec.get(period=Record.DAY)
+        records[2][1] = orec.get(period=Record.WEEK)
+        records[3][1] = orec.get(period=Record.MONTH)
+        records[4][1] = orec.get(period=Record.YEAR)
+
+    for dp in points:
+        skills = SkillLevel.objects.filter(datapoint=dp)
+        mod_skills = skills.filter(skill_id__in=modified_skills)
+
+        # Recalculate hours for each modified skill for this datapoint.
+        for s in mod_skills:
+            s.current_hours = __calculate_hours(rates[s.skill_id], s.experience)
+            if orig:
+                s.original_hours = s.current_hours
+            s.save()
+
+        # Set overall hours for datapoint as sum of skill hours.
+        overall = skills.get(skill_id=0)
+        overall.current_hours = skills.filter(skill_id__gt=0) \
+                                      .aggregate(Sum('current_hours')) \
+                                      .get('current_hours__sum')
+        if orig:
+            overall.original_hours = overall.current_hours
+        overall.save()
+
+        ### TODO: Record checking and updating should be optimized to avoid
+        ### redundantly checking the same datapoints multiple times.
+        ### Amount of database queries can be reduced.
+
+        # Check the five minute QHA from this datapoint
+        # and update record if necessary.
+        start = dp.time - timedelta(seconds=300)
+        first = points.filter(time__gte=start).first()
+        if first:
+            h = SkillLevel.objects.get(datapoint=first, skill_id=0).current_hours
+            dh = overall.current_hours - h
+            if dh < 0.01:
+                dh = 0
+
+            day = records[0][0]
+            if dh > day.hours:
+                day.hours = dh
+                day.start = first
+                day.end = dp
+                if orig:
+                    records[0][1].hours = dh
+                    records[0][1].start = first
+                    records[0][1].end = dp
+
+
+        # Check and update day, week, month and year records.
+        for i, d in enumerate([1, 7, 31, 365]):
+            ind = i + 1
+            start = dp.time - timedelta(days=d)
+            first = points.filter(time__gte=start).first()
+
+            if not first:
+                continue
+
+            h = SkillLevel.objects.get(datapoint=first, skill_id=0).current_hours
+            dh = overall.current_hours - h
+            if dh < 0.01:
+                dh = 0
+
+            r = records[ind][0]
+            if dh > r.hours:
+                r.hours = dh
+                r.start = first
+                r.end = dp
+                if orig:
+                    records[ind][1].hours = dh
+                    records[ind][1].start = first
+                    records[ind][1].end = dp
+
+    # Store all record values back into the database.
+    for r in records:
+        r[0].save()
+        if orig:
+            r[1].save()
+
 
 
 class RecentUpdateError(Exception):
