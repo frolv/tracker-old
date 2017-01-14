@@ -17,7 +17,7 @@
 #
 
 import re
-from django.db import transaction
+from django.db import connection, transaction
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
@@ -457,24 +457,32 @@ def recalculate_single(acc, modified_skills, rates, orig):
         records[4][1] = orec.get(period=Record.YEAR)
 
     for dp in points:
-        skills = SkillLevel.objects.filter(datapoint=dp)
-        mod_skills = skills.filter(skill_id__in=modified_skills)
+        # Optimize for time through raw SQL queries.
+        with connection.cursor() as cursor:
+            # Recalculate hours for each modified skill.
+            for s in modified_skills:
+                cursor.execute('SELECT experience FROM tracker_skilllevel WHERE \
+                                datapoint_id = %s AND skill_id = %s', [dp.id, s])
+                h = __calculate_hours(rates[s], cursor.fetchone()[0])
+                if not orig:
+                    cursor.execute('UPDATE tracker_skilllevel \
+                                    SET current_hours = %s \
+                                    WHERE datapoint_id = %s AND skill_id = %s',
+                                    [h, dp.id, s])
+                else:
+                    cursor.execute('UPDATE tracker_skilllevel \
+                                    SET current_hours = %s, original_hours = %s \
+                                    WHERE datapoint_id = %s AND skill_id = %s',
+                                    [h, h, dp.id, s])
 
-        # Recalculate hours for each modified skill for this datapoint.
-        for s in mod_skills:
-            s.current_hours = __calculate_hours(rates[s.skill_id], s.experience)
-            if orig:
-                s.original_hours = s.current_hours
-            s.save()
+            # Recalculate total hours for this datapoint.
+            cursor.execute('SELECT sum(current_hours) FROM tracker_skilllevel \
+                            WHERE datapoint_id = %s AND skill_id != 0', [dp.id])
+            hours = cursor.fetchone()[0]
 
-        # Set overall hours for datapoint as sum of skill hours.
-        overall = skills.get(skill_id=0)
-        overall.current_hours = skills.filter(skill_id__gt=0) \
-                                      .aggregate(Sum('current_hours')) \
-                                      .get('current_hours__sum')
-        if orig:
-            overall.original_hours = overall.current_hours
-        overall.save()
+            cursor.execute('UPDATE tracker_skilllevel SET current_hours = %s \
+                            WHERE datapoint_id = %s AND skill_id = 0',
+                            [hours, dp.id])
 
         ### TODO: Record checking and updating should be optimized to avoid
         ### redundantly checking the same datapoints multiple times.
@@ -486,7 +494,7 @@ def recalculate_single(acc, modified_skills, rates, orig):
         first = points.filter(time__gte=start).first()
         if first:
             h = SkillLevel.objects.get(datapoint=first, skill_id=0).current_hours
-            dh = overall.current_hours - h
+            dh = hours - h
             if dh < 0.01:
                 dh = 0
 
@@ -511,7 +519,7 @@ def recalculate_single(acc, modified_skills, rates, orig):
                 continue
 
             h = SkillLevel.objects.get(datapoint=first, skill_id=0).current_hours
-            dh = overall.current_hours - h
+            dh = hours - h
             if dh < 0.01:
                 dh = 0
 
