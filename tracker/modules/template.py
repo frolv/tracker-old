@@ -29,26 +29,35 @@ def player_skill_table(datapoints):
     respectively and the fifth is the name of the skill.
     """
 
-    skills = Skill.objects.order_by('skill_id')
+    skills = accounttracker.skills()
     table_data = []
 
     if len(datapoints) == 0:
         return table_data
 
-    for i in range(24):
+    for i in range(len(skills)):
         sn = skills[i].skillname
 
         exp = datapoints[0][1][i].experience
         rank = datapoints[0][1][i].rank
+        hours =  datapoints[0][1][i].current_hours
 
         de = exp - datapoints[-1][1][i].experience
         # Reversed as higher ranks are better.
         dr = datapoints[-1][1][i].rank - rank
+        dh = hours - datapoints[-1][1][i].current_hours
+        if dh < 0.01:
+            dh = 0
 
         if de > 0:
             s0 = '+{:,}'.format(de)
         else:
             s0 = '{:,}'.format(de)
+
+        if dh > 0:
+            s2 = '+{:,.2f}'.format(dh)
+        else:
+            s2 = '{:,.2f}'.format(dh)
 
         if dr < 0:
             s1 = '{:,}'.format(dr)
@@ -56,7 +65,8 @@ def player_skill_table(datapoints):
             s1 = '+{:,}'.format(dr)
         else:
             s1 = '0'
-        table_data.append((s0, s1, '{:,}'.format(exp), '{:,}'.format(rank), sn))
+        table_data.append((s0, s1, s2, '{:,}'.format(exp),
+                           '{:,}'.format(rank), sn))
 
     return table_data
 
@@ -124,11 +134,13 @@ def player_page(acc, datapoints, period, searchperiod):
         skills = accounttracker.skills()
         cs = None
         ce = None
+        dh = '0.00'
     else:
         lastupdate = datapoints[0][0].time
         skills = None
         cs = datapoints[-1][0].time
         ce = lastupdate
+        dh = table_data[0][2]
 
     records = player_records(acc, 0)
     skillname = 'Overall'
@@ -142,6 +154,7 @@ def player_page(acc, datapoints, period, searchperiod):
         'customend': ce,
         'table_data': table_data,
         'table_skills': skills,
+        'delta_hours': dh,
         'firstupdate': firstupdate,
         'lastupdate': lastupdate,
         'records': records,

@@ -16,7 +16,7 @@
           <tr class="player-table-row" id="{{ "player-table-row-"|add:i}}">
             {# Skill image with name in tooltip #}
             <td class="player-table-skill" id={{ "player-table-skill-"|add:i }}
-                data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
+                data-toggle="tooltip" data-container="body" title="{{ d.5 }}">
               {% with imgpath="img/skills/skill"|add:i|add:".png" %}
               <img src="{% static imgpath %}"</img>
               {% endwith %}
@@ -25,12 +25,12 @@
             {# Experience gain with current total exp in tooltip #}
             {% if d.0.0 == '+' %}
               <td class="player-table-positive player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.2 }}">
+                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
                 {{ d.0 }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.2 }}">
+                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
                 {{ d.0 }}
               </td>
             {% endif %}
@@ -38,22 +38,37 @@
             {# Change in rank with current rank in tooltip #}
             {% if d.1.0 == '+' %}
               <td class="player-table-positive player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
+                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
                 {{ d.1 }}
               </td>
             {% elif d.1.0 == '-' %}
               <td class="player-table-negative player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
+                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
                 {{ d.1 }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
+                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
                 {{ d.1 }}
               </td>
             {% endif %}
 
-            <td>0.00</td>
+            {% if d.2.0 == '+' %}
+              <td class="player-table-positive player-table-hours"
+                  data-toggle="tooltip" data-container="body" title="">
+                {{ d.2 }}
+              </td>
+            {% elif d.2.0 == '-' %}
+              <td class="player-table-negative player-table-hours"
+                  data-toggle="tooltip" data-container="body" title="">
+                {{ d.2 }}
+              </td>
+            {% else %}
+              <td class="player-table-neutral player-table-hours"
+                  data-toggle="tooltip" data-container="body" title="">
+                {{ d.2 }}
+              </td>
+            {% endif %}
           </tr>
         {% endwith %}
       {% endfor %}
@@ -75,5 +90,28 @@
         </tr>
       {% endfor %}
     {% endif %}
+
+  {# QHA Row #}
+  <tr>
+    <td>QHA</td>
+    <td>-</td>
+    <td>0</td>
+    {% if delta_hours.0 == '+' %}
+      <td class="player-table-positive player-table-hours"
+          data-toggle="tooltip" data-container="body" title="">
+        {{ delta_hours }}
+      </td>
+    {% elif delta_hours.0 == '-' %}
+      <td class="player-table-negative player-table-hours"
+          data-toggle="tooltip" data-container="body" title="">
+        {{ delta_hours }}
+      </td>
+    {% else %}
+      <td class="player-table-neutral player-table-hours"
+          data-toggle="tooltip" data-container="body" title="">
+        {{ delta_hours }}
+      </td>
+    {% endif %}
+  </tr>
   </tbody>
 </table>
