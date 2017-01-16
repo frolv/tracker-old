@@ -35,9 +35,8 @@ def player_skill_table(datapoints):
     if len(datapoints) == 0:
         return table_data
 
+    # TODO: make each element in list a dictionary instead of the current mess
     for i in range(len(skills)):
-        sn = skills[i].skillname
-
         exp = datapoints[0][1][i].experience
         rank = datapoints[0][1][i].rank
         hours =  datapoints[0][1][i].current_hours
@@ -49,24 +48,30 @@ def player_skill_table(datapoints):
         if dh < 0.01:
             dh = 0
 
-        if de > 0:
-            s0 = '+{:,}'.format(de)
-        else:
-            s0 = '{:,}'.format(de)
+        skilldata = {}
 
-        if dh > 0:
-            s2 = '+{:,.2f}'.format(dh)
+        if de > 0:
+            skilldata['de'] = '+{:,}'.format(de)
         else:
-            s2 = '{:,.2f}'.format(dh)
+            skilldata['de'] = '{:,}'.format(de)
 
         if dr < 0:
-            s1 = '{:,}'.format(dr)
+            skilldata['dr'] = '{:,}'.format(dr)
         elif dr > 0:
-            s1 = '+{:,}'.format(dr)
+            skilldata['dr'] = '+{:,}'.format(dr)
         else:
-            s1 = '0'
-        table_data.append((s0, s1, s2, '{:,}'.format(exp),
-                           '{:,}'.format(rank), sn))
+            skilldata['dr'] = '0'
+
+        if dh > 0:
+            skilldata['dh'] = '+{:,.2f}'.format(dh)
+        else:
+            skilldata['dh'] = '{:,.2f}'.format(dh)
+
+        skilldata['exp'] = '{:,}'.format(exp)
+        skilldata['rank'] = '{:,}'.format(rank)
+        skilldata['skillname'] = skills[i].skillname
+
+        table_data.append(skilldata)
 
     return table_data
 
@@ -140,7 +145,7 @@ def player_page(acc, datapoints, period, searchperiod):
         skills = None
         cs = datapoints[-1][0].time
         ce = lastupdate
-        dh = table_data[0][2]
+        dh = table_data[0]['dh']
 
     records = player_records(acc, 0)
     skillname = 'Overall'

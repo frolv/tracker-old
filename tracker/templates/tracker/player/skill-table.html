@@ -16,57 +16,57 @@
           <tr class="player-table-row" id="{{ "player-table-row-"|add:i}}">
             {# Skill image with name in tooltip #}
             <td class="player-table-skill" id={{ "player-table-skill-"|add:i }}
-                data-toggle="tooltip" data-container="body" title="{{ d.5 }}">
+                data-toggle="tooltip" data-container="body" title="{{ d.skillname }}">
               {% with imgpath="img/skills/skill"|add:i|add:".png" %}
               <img src="{% static imgpath %}"</img>
               {% endwith %}
             </td>
 
             {# Experience gain with current total exp in tooltip #}
-            {% if d.0.0 == '+' %}
+            {% if d.de.0 == '+' %}
               <td class="player-table-positive player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
-                {{ d.0 }}
+                  data-toggle="tooltip" data-container="body" title="{{ d.exp }}">
+                {{ d.de }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.3 }}">
-                {{ d.0 }}
+                  data-toggle="tooltip" data-container="body" title="{{ d.exp }}">
+                {{ d.de }}
               </td>
             {% endif %}
 
             {# Change in rank with current rank in tooltip #}
-            {% if d.1.0 == '+' %}
+            {% if d.dr.0 == '+' %}
               <td class="player-table-positive player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
-                {{ d.1 }}
+                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                {{ d.dr }}
               </td>
-            {% elif d.1.0 == '-' %}
+            {% elif d.dr.0 == '-' %}
               <td class="player-table-negative player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
-                {{ d.1 }}
+                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                {{ d.dr }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.4 }}">
-                {{ d.1 }}
+                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                {{ d.dr }}
               </td>
             {% endif %}
 
-            {% if d.2.0 == '+' %}
+            {% if d.dh.0 == '+' %}
               <td class="player-table-positive player-table-hours"
                   data-toggle="tooltip" data-container="body" title="">
-                {{ d.2 }}
+                {{ d.dh }}
               </td>
-            {% elif d.2.0 == '-' %}
+            {% elif d.dh.0 == '-' %}
               <td class="player-table-negative player-table-hours"
                   data-toggle="tooltip" data-container="body" title="">
-                {{ d.2 }}
+                {{ d.dh }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-hours"
                   data-toggle="tooltip" data-container="body" title="">
-                {{ d.2 }}
+                {{ d.dh }}
               </td>
             {% endif %}
           </tr>
