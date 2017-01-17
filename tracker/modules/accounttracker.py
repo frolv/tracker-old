@@ -72,6 +72,8 @@ def track(username):
         i = len(skills) - 1
         while i >= 0:
             fields = skills[i].split(',')
+            if len(fields) != 3:
+                raise TrackError
 
             if (fields[2] == '-1'):
                 exp = 0
@@ -545,6 +547,9 @@ class RecentUpdateError(Exception):
     pass
 
 class InvalidUsernameError(Exception):
+    pass
+
+class TrackError(Exception):
     pass
 
 class InvalidPeriodError(Exception):
