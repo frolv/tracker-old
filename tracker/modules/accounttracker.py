@@ -356,11 +356,22 @@ def first_datapoint(acc):
     return DataPoint.objects.filter(rsaccount=acc).order_by('time').first()
 
 
-def skills():
+def skills(**kwargs):
     """
     Return set of Skill objects for all in-game skills.
     """
-    return Skill.objects.filter(skill_id__lt=Skill.QHA_ID).order_by('skill_id')
+
+    try:
+        include_hours = kwargs['include_qha']
+    except KeyError:
+        include_hours = False
+
+    if include_hours:
+        s = Skill.objects.all()
+    else:
+        s = Skill.objects.filter(skill_id__lt=Skill.QHA_ID)
+
+    return s.order_by('skill_id')
 
 
 def skill_name(skill_id):
