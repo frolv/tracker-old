@@ -19,7 +19,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 
-from tracker.models import RSAccount, Record
+from tracker.models import RSAccount, Skill, Record
 from tracker.modules import accounttracker, osrsapi, template
 
 def index(request):
@@ -86,6 +86,7 @@ def records(request, skill):
         'year_records': template.record_table(skill_id, Record.YEAR),
         'fivemin_records': template.record_table(skill_id, Record.FIVE_MIN),
         'searchperiod': get_searchperiod(request),
+        'use_hours': skill_id >= Skill.QHA_ID,
     }
 
     return render(request, 'tracker/records/records.html', context)
@@ -110,6 +111,7 @@ def recordsfull(request, skill, period, page=1):
         'page': page,
         'records': template.record_table(skill_id, p, start, 25),
         'searchperiod': get_searchperiod(request),
+        'use_hours': skill_id >= Skill.QHA_ID,
     }
 
     return render(request, 'tracker/records/full.html', context)
@@ -133,6 +135,8 @@ def updateplayer(request):
         return HttpResponse('-3')
     except accounttracker.InvalidUsernameError:
         return HttpResponse('-4')
+    except accounttracker.TrackError:
+        return HttpResponse('-5')
 
     return HttpResponse('OK')
 

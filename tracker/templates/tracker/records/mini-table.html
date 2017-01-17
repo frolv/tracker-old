@@ -27,7 +27,11 @@
     <tr>
       <th>Rank</th>
       <th>Player</th>
-      <th>Experience</th>
+      {% if use_hours %}
+        <th>QHA</th>
+      {% else %}
+        <th>Experience</th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
