@@ -35,7 +35,6 @@ def player_skill_table(datapoints):
     if len(datapoints) == 0:
         return table_data
 
-    # TODO: make each element in list a dictionary instead of the current mess
     for i in range(len(skills)):
         exp = datapoints[0][1][i].experience
         rank = datapoints[0][1][i].rank
@@ -113,15 +112,27 @@ def record_table(skill_id, period, start=0, limit=10):
 
     rec = []
     end = start + limit
-    top = Record.objects.filter(skill_id=skill_id, period=period) \
-                        .order_by('-experience')[start:end]
+
+    if skill_id < Skill.QHA_ID:
+        top = Record.objects.filter(skill_id=skill_id, period=period) \
+                            .order_by('-experience')[start:end]
+    else:
+        top = Record.objects.filter(skill_id=skill_id, period=period) \
+                            .order_by('-hours')[start:end]
 
     for r in top:
-        if r.experience == 0:
-            break
+        if skill_id < Skill.QHA_ID:
+            if r.experience == 0:
+                break
+            recval = '{:,}'.format(r.experience)
+
+        else:
+            if r.hours == 0:
+                break
+            recval = '{:,.2f}'.format(r.hours)
 
         name = r.rsaccount.username
-        rec.append((name, name.replace('_', ' '), '{:,}'.format(r.experience), \
+        rec.append((name, name.replace('_', ' '), recval,
                     str(r.start_id), str(r.end_id)))
 
     return rec
