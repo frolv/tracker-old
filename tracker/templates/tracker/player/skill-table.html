@@ -25,12 +25,14 @@
             {# Experience gain with current total exp in tooltip #}
             {% if d.de.0 == '+' %}
               <td class="player-table-positive player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.exp }}">
+                  data-toggle="tooltip" data-container="body"
+                  title="Experience in {{ d.skillname }}: {{ d.exp }}">
                 {{ d.de }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-experience"
-                  data-toggle="tooltip" data-container="body" title="{{ d.exp }}">
+                  data-toggle="tooltip" data-container="body"
+                  title="Experience in {{ d.skillname }}: {{ d.exp }}">
                 {{ d.de }}
               </td>
             {% endif %}
@@ -38,34 +40,40 @@
             {# Change in rank with current rank in tooltip #}
             {% if d.dr.0 == '+' %}
               <td class="player-table-positive player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                  data-toggle="tooltip" data-container="body"
+                  title="Rank in {{ d.skillname }}: {{ d.rank }}">
                 {{ d.dr }}
               </td>
             {% elif d.dr.0 == '-' %}
               <td class="player-table-negative player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                  data-toggle="tooltip" data-container="body"
+                  title="Rank in {{ d.skillname }}: {{ d.rank }}">
                 {{ d.dr }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-rank"
-                  data-toggle="tooltip" data-container="body" title="{{ d.rank }}">
+                  data-toggle="tooltip" data-container="body"
+                  title="Rank in {{ d.skillname }}: {{ d.rank }}">
                 {{ d.dr }}
               </td>
             {% endif %}
 
             {% if d.dh.0 == '+' %}
               <td class="player-table-positive player-table-hours"
-                  data-toggle="tooltip" data-container="body" title="">
+                  data-toggle="tooltip" data-container="body"
+                  title="QHA in {{ d.skillname }}: {{ d.hours }}">
                 {{ d.dh }}
               </td>
             {% elif d.dh.0 == '-' %}
               <td class="player-table-negative player-table-hours"
-                  data-toggle="tooltip" data-container="body" title="">
+                  data-toggle="tooltip" data-container="body"
+                  title="QHA in {{ d.skillname }}: {{ d.hours }}">
                 {{ d.dh }}
               </td>
             {% else %}
               <td class="player-table-neutral player-table-hours"
-                  data-toggle="tooltip" data-container="body" title="">
+                  data-toggle="tooltip" data-container="body"
+                  title="QHA in {{ d.skillname }}: {{ d.hours }}">
                 {{ d.dh }}
               </td>
             {% endif %}

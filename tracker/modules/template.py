@@ -69,6 +69,7 @@ def player_skill_table(datapoints):
 
         skilldata['exp'] = '{:,}'.format(exp)
         skilldata['rank'] = '{:,}'.format(rank)
+        skilldata['hours'] = '{:,.2f}'.format(hours)
         skilldata['skillname'] = skills[i].skillname
 
         table_data.append(skilldata)
