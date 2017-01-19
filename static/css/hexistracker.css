@@ -5,6 +5,10 @@ body {
   color: #cccccc;
 }
 
+@media (max-width: 992px) {
+  body { padding-top: 120px; }
+}
+
 #tracker-navbar {
   background-color: #333333;
   border-color: #181818;
