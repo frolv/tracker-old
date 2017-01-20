@@ -97,6 +97,9 @@ def track(username):
             i -= 1
 
         update_time_played(acc, dp, total_hours, periods)
+        tp = TimePlayed.objects.get(rsaccount=acc)
+        tp.hours = total_hours
+        tp.save()
 
     print('Account %s has been updated.' % username)
     return dp
