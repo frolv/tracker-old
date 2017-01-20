@@ -100,8 +100,11 @@
     {% endif %}
 
   {# QHA Row #}
-  <tr>
-    <td>QHA</td>
+  <tr class="player-table-row" id="player-table-row-99">
+    <td class="player-table-skill" id="player-table-skill-99"
+        data-toggle="tooltip" data-container="body" title="QHA">
+      <img src="{% static "img/skills/skill99.png" %}"</img>
+    </td>
     <td>-</td>
     <td>0</td>
     {% if delta_hours.0 == '+' %}

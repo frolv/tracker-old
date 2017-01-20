@@ -8,9 +8,9 @@
           <td>Day</td>
           <td>
             {% if records.0.0 %}
-              <a href="{{ records.0.1 }}">{{ records.0.0 }} xp</a>
+              <a href="{{ records.0.1 }}">{{ records.0.0 }} {{ suffix }}</a>
             {% else %}
-              0 xp
+              0 {{ suffix }}
             {% endif %}
           </td>
         </tr>
@@ -18,9 +18,9 @@
           <td>Week</td>
           <td>
             {% if records.1.0 %}
-              <a href="{{ records.1.1 }}">{{ records.1.0 }} xp</a>
+              <a href="{{ records.1.1 }}">{{ records.1.0 }} {{ suffix }}</a>
             {% else %}
-              0 xp
+              0 {{ suffix }}
             {% endif %}
           </td>
         </tr>
@@ -28,9 +28,9 @@
           <td>Month</td>
           <td>
             {% if records.2.0 %}
-              <a href="{{ records.2.1 }}">{{ records.2.0 }} xp</a>
+              <a href="{{ records.2.1 }}">{{ records.2.0 }} {{ suffix }}</a>
             {% else %}
-              0 xp
+              0 {{ suffix }}
             {% endif %}
           </td>
         </tr>
@@ -38,9 +38,9 @@
           <td>Year</td>
           <td>
             {% if records.3.0 %}
-              <a href="{{ records.3.1 }}">{{ records.3.0 }} xp</a>
+              <a href="{{ records.3.1 }}">{{ records.3.0 }} {{ suffix }}</a>
             {% else %}
-              0 xp
+              0 {{ suffix }}
             {% endif %}
           </td>
         </tr>

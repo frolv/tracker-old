@@ -90,11 +90,20 @@ def player_records(acc, skill_id):
         except Record.DoesNotExist:
             return []
 
-        if r.experience == 0:
-            url = "#"
+        if skill_id < Skill.QHA_ID:
+            if r.experience == 0:
+                url = "#"
+            else:
+                url = "/player/%s/period/%d-%d" % (acc.username, r.start_id,
+                                                   r.end_id)
+            rec.append(('{:,}'.format(r.experience), url))
         else:
-            url = "/player/%s/period/%d-%d" % (acc.username, r.start_id, r.end_id)
-        rec.append(('{:,}'.format(r.experience), url))
+            if r.hours == 0:
+                url = "#"
+            else:
+                url = "/player/%s/period/%d-%d" % (acc.username, r.start_id,
+                                                   r.end_id)
+            rec.append(('{:,.2f}'.format(r.hours), url))
 
     return rec
 
@@ -177,6 +186,7 @@ def player_page(acc, datapoints, period, searchperiod):
         'records': records,
         'skillname': skillname,
         'searchperiod': searchperiod,
+        'suffix': 'xp',
     }
 
     return t.render(context)

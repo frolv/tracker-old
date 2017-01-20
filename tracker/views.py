@@ -158,6 +158,7 @@ def recordstable(request):
     context = {
         'records': template.player_records(acc, skill),
         'skillname': accounttracker.skill_name(skill),
+        'suffix': 'xp' if skill < Skill.QHA_ID else 'hours',
     }
 
     return render(request, 'tracker/player/record-table.html', context)
