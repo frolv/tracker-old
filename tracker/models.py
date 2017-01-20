@@ -182,3 +182,12 @@ class SkillRate(models.Model):
     def __str__(self):
         return '%s: %d exp/h at %d exp' % (self.skill.skillname,
                                            self.rate, self.start_exp)
+
+
+class TimePlayed(models.Model):
+    rsaccount = models.ForeignKey(RSAccount, on_delete=models.CASCADE,
+                                  db_index=True)
+    hours = models.FloatField(db_index=True)
+
+    def __str__(self):
+        return '%s: %g hours' % (self.rsaccount.username, self.hours)
