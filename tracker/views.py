@@ -117,6 +117,19 @@ def recordsfull(request, skill, period, page=1):
     return render(request, 'tracker/records/full.html', context)
 
 
+def current(request, skill):
+    """
+    Current top overview for a given skill.
+    """
+
+    skill_id = int(skill)
+
+    context = template.current_top(skill_id)
+    context['searchperiod'] = get_searchperiod(request)
+
+    return render(request, 'tracker/current/current.html', context)
+
+
 def updateplayer(request):
     """
     Player update request.

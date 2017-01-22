@@ -87,6 +87,7 @@ def player_skill_table(acc, datapoints):
     table_data['delta_rank'] = '{:,}'.format(orig_rank - rank)
     table_data['current_hours'] = table_data['skill_list'][0]['hours']
     table_data['current_rank'] = rank
+
     return table_data
 
 
@@ -201,3 +202,16 @@ def player_page(acc, datapoints, period, searchperiod):
     }
 
     return t.render(context)
+
+
+def current_top(skill_id):
+    """
+    Populate the template context for a current top overview page.
+    """
+
+    context = {
+        'skillname': accounttracker.skill_name(skill_id),
+        'skills': accounttracker.skills()
+    }
+
+    return context
