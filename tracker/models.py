@@ -191,3 +191,12 @@ class TimePlayed(models.Model):
 
     def __str__(self):
         return '%s: %g hours' % (self.rsaccount.username, self.hours)
+
+
+class TimePlayedRank(models.Model):
+    datapoint = models.ForeignKey(DataPoint, on_delete=models.CASCADE,
+                                  db_index=True)
+    rank = models.IntegerField()
+
+    def __str__(self):
+        return 'datapoint %d: rank %d' % (self.datapoint_id, self.rank)
