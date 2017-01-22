@@ -1,0 +1,65 @@
+{% extends "tracker/hexistracker.html" %}
+
+{% comment %}
+ %
+ % tracker/templates/tracker/current/current.html
+ % Copyright (C) 2016-2017 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static "css/current.css" %}">
+{% endblock %}
+
+{% block pagetitle %}
+<title>{{ skillname }} Current Top - Hexis Tracker</title>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  <div class="current-skills">
+    {% for s in skills %}
+      {% with i=forloop.counter0|stringformat:"s" %}
+      {% with imgpath="img/skills/skill"|add:i|add:".png" %}
+        <div class="current-skill-icon" data-toggle="tooltip"
+        data-placement="bottom" title="{{ s.skillname }}">
+          <a href="../{{ i }}/"><img src="{% static imgpath %}"></img></a>
+        </div>
+      {% endwith %}
+      {% endwith %}
+    {% endfor %}
+    <div class="current-skill-icon" data-toggle="tooltip"
+    data-placement="bottom" title="QHA">
+      <a href="../99/">
+        <img src="{% static "img/skills/skill99.png" %}"></img>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="text-center">{{ skillname }} Current Top</h3>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static "js/current.js" %}"></script>
+{% endblock %}
