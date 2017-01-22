@@ -179,7 +179,7 @@ def skillstable(request):
         return HttpResponse('-2')
 
     datapoints = accounttracker.get_data_range(acc, request.GET['period'])
-    table_data = template.player_skill_table(datapoints)
+    table_data = template.player_skill_table(acc, datapoints)
 
     if len(datapoints) == 0:
         skills = accounttracker.skills()

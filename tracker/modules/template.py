@@ -18,10 +18,10 @@
 
 from django.template import loader
 
-from tracker.models import Skill, DataPoint, Record
+from tracker.models import *
 from tracker.modules import accounttracker
 
-def player_skill_table(datapoints):
+def player_skill_table(acc, datapoints):
     """
     Set up an array of tuples to populate the rows in a player's skill table.
     The first entry in each tuple is the difference in experience, the second
@@ -30,9 +30,12 @@ def player_skill_table(datapoints):
     """
 
     skills = accounttracker.skills()
-    table_data = []
+    table_data = {
+        'skill_list': [],
+    }
 
     if len(datapoints) == 0:
+        table_data['total_hours'] = '0.00'
         return table_data
 
     for i in range(len(skills)):
@@ -71,8 +74,19 @@ def player_skill_table(datapoints):
         skilldata['hours'] = '{:,.2f}'.format(hours)
         skilldata['skillname'] = skills[i].skillname
 
-        table_data.append(skilldata)
+        table_data['skill_list'].append(skilldata)
 
+    # HACK: subtracting 0.01 and using strictly greater than as the filter
+    # seems to make the rank accurate whereas the standard greater than or
+    # equal to filter occasionally reports duplicate ranks.
+    total_hours = datapoints[0][1][0].current_hours - 0.01
+    rank = TimePlayed.objects.filter(hours__gt=total_hours).count()
+    orig_rank = TimePlayedRank.objects.get(datapoint=datapoints[-1][0]).rank
+
+    table_data['delta_hours'] = table_data['skill_list'][0]['dh']
+    table_data['delta_rank'] = '{:,}'.format(orig_rank - rank)
+    table_data['current_hours'] = table_data['skill_list'][0]['hours']
+    table_data['current_rank'] = rank
     return table_data
 
 
@@ -152,7 +166,7 @@ def player_page(acc, datapoints, period, searchperiod):
     Return the HTML of the player page for a specific player and period.
     """
 
-    table_data = player_skill_table(datapoints)
+    table_data = player_skill_table(acc, datapoints)
     firstupdate = accounttracker.first_datapoint(acc).time
 
     if len(datapoints) == 0:
@@ -160,13 +174,11 @@ def player_page(acc, datapoints, period, searchperiod):
         skills = accounttracker.skills()
         cs = None
         ce = None
-        dh = '0.00'
     else:
         lastupdate = datapoints[0][0].time
         skills = None
         cs = datapoints[-1][0].time
         ce = lastupdate
-        dh = table_data[0]['dh']
 
     records = player_records(acc, 0)
     skillname = 'Overall'
@@ -180,7 +192,6 @@ def player_page(acc, datapoints, period, searchperiod):
         'customend': ce,
         'table_data': table_data,
         'table_skills': skills,
-        'delta_hours': dh,
         'firstupdate': firstupdate,
         'lastupdate': lastupdate,
         'records': records,

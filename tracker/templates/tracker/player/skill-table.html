@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     {% if table_data|length > 0 %}
-      {% for d in table_data %}
+      {% for d in table_data.skill_list %}
         {% with i=forloop.counter0|stringformat:"s" %}
           <tr class="player-table-row" id="{{ "player-table-row-"|add:i}}">
             {# Skill image with name in tooltip #}
@@ -106,21 +106,42 @@
       <img src="{% static "img/skills/skill99.png" %}"</img>
     </td>
     <td>-</td>
-    <td>0</td>
-    {% if delta_hours.0 == '+' %}
-      <td class="player-table-positive player-table-hours"
-          data-toggle="tooltip" data-container="body" title="">
-        {{ delta_hours }}
+    {% if table_data.delta_rank.0 == '+' %}
+      <td class="player-table-positive player-table-rank"
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA rank: {{ table_data.current_rank }}">
+        {{ table_data.delta_rank }}
       </td>
-    {% elif delta_hours.0 == '-' %}
+    {% elif table_data.delta_rank.0 == '-' %}
+      <td class="player-table-negative player-table-rank"
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA rank: {{ table_data.current_rank }}">
+        {{ table_data.delta_rank }}
+      </td>
+    {% else %}
+      <td class="player-table-neutral player-table-rank"
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA rank: {{ table_data.current_rank }}">
+        {{ table_data.delta_rank }}
+      </td>
+    {% endif %}
+    {% if table_data.delta_hours.0 == '+' %}
+      <td class="player-table-positive player-table-hours"
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA: {{ table_data.current_hours }}">
+        {{ table_data.delta_hours }}
+      </td>
+    {% elif table_data.delta_hours.0 == '-' %}
       <td class="player-table-negative player-table-hours"
-          data-toggle="tooltip" data-container="body" title="">
-        {{ delta_hours }}
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA: {{ table_data.current_hours }}">
+        {{ table_data.delta_hours }}
       </td>
     {% else %}
       <td class="player-table-neutral player-table-hours"
-          data-toggle="tooltip" data-container="body" title="">
-        {{ delta_hours }}
+          data-toggle="tooltip" data-container="body"
+          title="Current QHA: {{ table_data.current_hours }}">
+        {{ table_data.delta_hours }}
       </td>
     {% endif %}
   </tr>
