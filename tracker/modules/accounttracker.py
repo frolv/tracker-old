@@ -101,6 +101,10 @@ def track(username):
         tp.hours = total_hours
         tp.save()
 
+        # compute and save time played rank
+        rank = TimePlayed.objects.filter(hours__gte=total_hours).count()
+        TimePlayedRank.objects.create(datapoint=dp, rank=rank)
+
     print('Account %s has been updated.' % username)
     return dp
 
