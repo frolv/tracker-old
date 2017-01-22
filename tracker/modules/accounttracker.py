@@ -64,6 +64,7 @@ def track(username):
         # Create current and record entries first time account is tracked.
         if first:
             create_records(acc, dp)
+            TimePlayed.objects.create(rsaccount=acc, hours=0)
 
         periods = get_period_firsts(acc, timezone.now())
         skills = hiscore_lookup(username)
@@ -275,34 +276,34 @@ def create_records(acc, datapoint):
     skills = Skill.objects.order_by('skill_id')
     for s in skills:
         if s.skill_id != Skill.ORIG_QHA_ID:
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.DAY)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.WEEK)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.MONTH)
-            Current.objects.create(rsaccount=acc, skill=s,
-                                   start=datapoint, end=datapoint,
-                                   experience=0, period=Current.YEAR)
+            Current.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                                   end=datapoint, experience=0, hours=0,
+                                   period=Current.DAY)
+            Current.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                                   end=datapoint, experience=0, hours=0,
+                                   period=Current.WEEK)
+            Current.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                                   end=datapoint, experience=0, hours=0,
+                                   period=Current.MONTH)
+            Current.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                                   end=datapoint, experience=0, hours=0,
+                                   period=Current.YEAR)
 
-        Record.objects.create(rsaccount=acc, skill=s,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.FIVE_MIN)
-        Record.objects.create(rsaccount=acc, skill=s,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.DAY)
-        Record.objects.create(rsaccount=acc, skill=s,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.WEEK)
-        Record.objects.create(rsaccount=acc, skill=s,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.MONTH)
-        Record.objects.create(rsaccount=acc, skill=s,
-                              start=datapoint, end=datapoint,
-                              experience=0, period=Record.YEAR)
+        Record.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                              end=datapoint, experience=0, hours=0,
+                              period=Record.FIVE_MIN)
+        Record.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                              end=datapoint, experience=0, hours=0,
+                              period=Record.DAY)
+        Record.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                              end=datapoint, experience=0, hours=0,
+                              period=Record.WEEK)
+        Record.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                              end=datapoint, experience=0, hours=0,
+                              period=Record.MONTH)
+        Record.objects.create(rsaccount=acc, skill=s, start=datapoint,
+                              end=datapoint, experience=0, hours=0,
+                              period=Record.YEAR)
 
 
 def get_data_range(acc, period):
