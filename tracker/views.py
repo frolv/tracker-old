@@ -124,6 +124,8 @@ def current(request, skill):
 
     skill_id = int(skill)
 
+    # TODO: update current top for expired datapoints
+
     context = template.current_top(skill_id)
     context['searchperiod'] = get_searchperiod(request)
 
