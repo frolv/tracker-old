@@ -1,0 +1,59 @@
+{% comment %}
+ %
+ % tracker/templates/tracker/records/table.html
+ % Copyright (C) 2016-2017 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+<h4 class="text-center"><b>{{ period|title }}</b></h4>
+
+<table class="table current-table">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Player</th>
+      {% if use_hours %}
+        <th>QHA</th>
+      {% else %}
+        <th>Experience</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% if not current %}
+      <tr>
+        <td colspan="3">No entries exist</td>
+      <tr>
+    {% else %}
+      {% for c in current %}
+        <tr>
+          {% with p="/player/"|add:c.0 %}
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <a href="{{ p }}/{{ period }}">{{ c.1 }}</a>
+          </td>
+          <td>
+            <a href="{{ p }}/period/{{ c.3 }}-{{ c.4 }}">{{ c.2 }}</a>
+          </td>
+          {% endwith %}
+        </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3"><a href="{{ period }}/"><b>...</b></a></td>
+      </tr>
+    {% endif %}
+  </tbody>
+</table>
