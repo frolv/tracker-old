@@ -21,3 +21,12 @@
   display: block;
   margin: auto;
 }
+
+.current-table-wrapper {
+  margin-top: 10px;
+}
+
+.current-table td,
+.current-table th {
+  text-align: center;
+}
