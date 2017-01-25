@@ -162,6 +162,45 @@ def record_table(skill_id, period, start=0, limit=10):
     return rec
 
 
+def current_table(skill_id, period, start=0, limit=10):
+    """
+    Set up an array of tuples to populate a single table on a current top page.
+
+    Arguments:
+    skill_id (int): the ID of the skill for which to look up records.
+    period (str): period for which to look up records.
+    start (int): the index at which to begin.
+    limit (int): number of players to return.
+    """
+
+    curr = []
+    end = start + limit
+
+    if skill_id < Skill.QHA_ID:
+        top = Current.objects.filter(skill_id=skill_id, period=period) \
+                             .order_by('-experience')[start:end]
+    else:
+        top = Current.objects.filter(skill_id=skill_id, period=period) \
+                             .order_by('-hours')[start:end]
+
+    for c in top:
+        if skill_id < Skill.QHA_ID:
+            if c.experience == 0:
+                break
+            curval = '{:,}'.format(c.experience)
+
+        else:
+            if c.hours == 0:
+                break
+            curval = '{:,.2f}'.format(c.hours)
+
+        name = c.rsaccount.username
+        curr.append((name, name.replace('_', ' '), curval,
+                     str(c.start_id), str(c.end_id)))
+
+    return curr
+
+
 def player_page(acc, datapoints, period, searchperiod):
     """
     Return the HTML of the player page for a specific player and period.
@@ -211,7 +250,12 @@ def current_top(skill_id):
 
     context = {
         'skillname': accounttracker.skill_name(skill_id),
-        'skills': accounttracker.skills()
+        'skills': accounttracker.skills(),
+        'day_current': current_table(skill_id, Current.DAY),
+        'week_current': current_table(skill_id, Current.WEEK),
+        'month_current': current_table(skill_id, Current.MONTH),
+        'year_current': current_table(skill_id, Current.YEAR),
+        'use_hours': skill_id >= Skill.QHA_ID,
     }
 
     return context
