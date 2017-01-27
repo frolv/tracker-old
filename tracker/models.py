@@ -119,6 +119,15 @@ class Current(models.Model):
                                              self.skill.skillname,
                                              self.start.time)
 
+    def str_to_period(s):
+        periods = {
+            'day': Current.DAY,
+            'week': Current.WEEK,
+            'month': Current.MONTH,
+            'year': Current.YEAR,
+        }
+        return periods[s]
+
 
 class Record(models.Model):
     """
