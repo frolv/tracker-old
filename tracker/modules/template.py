@@ -52,25 +52,25 @@ def player_skill_table(acc, datapoints):
 
         skilldata = {}
 
-        if de > 0:
-            skilldata['de'] = '+{:,}'.format(de)
+        if de:
+            skilldata['de'] = '{:+,}'.format(de)
         else:
-            skilldata['de'] = '{:,}'.format(de)
+            skilldata['de'] = '0'
 
-        if dr < 0:
-            skilldata['dr'] = '{:,}'.format(dr)
-        elif dr > 0:
-            skilldata['dr'] = '+{:,}'.format(dr)
+        if dr:
+            skilldata['dr'] = '{:+,}'.format(dr)
         else:
             skilldata['dr'] = '0'
 
-        if dh > 0:
-            skilldata['dh'] = '+{:,.2f}'.format(dh)
+        if dh:
+            skilldata['dh'] = '{:+,.2f}'.format(dh)
         else:
-            skilldata['dh'] = '{:,.2f}'.format(dh)
+            skilldata['dh'] = '0.00'
 
         skilldata['exp'] = '{:,}'.format(exp)
+        skilldata['rank'] = '+{:,}'.format(rank)
         skilldata['rank'] = '{:,}'.format(rank)
+        skilldata['hours'] = '+{:,.2f}'.format(hours)
         skilldata['hours'] = '{:,.2f}'.format(hours)
         skilldata['skillname'] = skills[i].skillname
 
@@ -82,9 +82,13 @@ def player_skill_table(acc, datapoints):
     total_hours = datapoints[0][1][0].current_hours - 0.01
     rank = TimePlayed.objects.filter(hours__gt=total_hours).count()
     orig_rank = TimePlayedRank.objects.get(datapoint=datapoints[-1][0]).rank
+    delta_rank = orig_rank - rank
 
     table_data['delta_hours'] = table_data['skill_list'][0]['dh']
-    table_data['delta_rank'] = '{:,}'.format(orig_rank - rank)
+    if delta_rank:
+        table_data['delta_rank'] = '{:+,}'.format(delta_rank)
+    else:
+        table_data['delta_rank'] = '0'
     table_data['current_hours'] = table_data['skill_list'][0]['hours']
     table_data['current_rank'] = rank
 
