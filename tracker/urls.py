@@ -27,6 +27,11 @@ urlpatterns = [
     url(r'^player/(?P<user>[a-zA-Z0-9_]+)/period/(?P<start>\d+)-(?P<end>\d+)$',
         views.playerperiod),
     url(r'^current/(?P<skill>(1?[0-9]|2[0-3]|99))/$', views.current),
+    url(r'^current/(?P<skill>(1?[0-9]|2[0-3]|99))/'
+        r'(?P<period>day|week|month|year)/$', views.currentfull),
+    url(r'^current/(?P<skill>(1?[0-9]|2[0-3]|99))/'
+        r'(?P<period>day|week|month|year)/(?P<page>\d+)$',
+        views.recordsfull),
     url(r'^records/(?P<skill>(1?[0-9]|2[0-3]|99|100))/$', views.records),
     url(r'^records/(?P<skill>(1?[0-9]|2[0-3]|99|100))/'
         r'(?P<period>day|week|month|year|fivemin)/$', views.recordsfull),
