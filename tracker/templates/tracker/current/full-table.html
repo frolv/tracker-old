@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <table class="table current-table full-current-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          {% if use_hours %}
+            <th>QHA</th>
+          {% else %}
+            <th>Experience</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if not current %}
+          <tr>
+            <td id="no-current" colspan="3">
+              No players have gained experience in {{ skillname }}
+              in the last {{ period }}.
+            </td>
+          <tr>
+        {% else %}
+          {% for c in current %}
+            <tr>
+              {% with p="/player/"|add:c.0 %}
+                <td>{{ forloop.counter|add:start }}</td>
+                <td>
+                  <a href="{{ p }}/{{ period }}">{{ c.1 }}</a>
+                </td>
+                <td>
+                  <a href="{{ p }}/period/{{ c.3 }}-{{ c.4 }}">{{ c.2 }}</a>
+                </td>
+              {% endwith %}
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+  <div class="col-md-2"></div>
+  {% if not current or start == 0 %}
+    <a class="col-md-3 btn btn-primary disabled" href="#">Previous Page</a>
+  {% else %}
+    <a class="col-md-3 btn btn-primary" href="{{ page|add:-1 }}">Previous Page</a>
+  {% endif %}
+  <div class="col-md-2"></div>
+  {% if not current or current|length < 25 %}
+    <a class="col-md-3 btn btn-primary disabled" href="#">Next Page</a>
+  {% else %}
+    <a class="col-md-3 btn btn-primary" href="{{ page|add:1 }}">Next Page</a>
+  {% endif %}
+  <div class="col-md-2"></div>
+</div>
