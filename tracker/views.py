@@ -146,7 +146,7 @@ def currentfull(request, skill, period, page=1):
         'period': period,
         'start': start,
         'page': page,
-        'current': template.record_table(skill_id, p, start, 25),
+        'current': template.current_table(skill_id, p, start, 25),
         'searchperiod': get_searchperiod(request),
         'use_hours': skill_id >= Skill.QHA_ID,
     }
