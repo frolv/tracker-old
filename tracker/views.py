@@ -19,7 +19,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 
-from tracker.models import RSAccount, Skill, Record
+from tracker.models import RSAccount, Skill, Record, Current
 from tracker.modules import accounttracker, osrsapi, template
 
 def index(request):
@@ -130,6 +130,28 @@ def current(request, skill):
     context['searchperiod'] = get_searchperiod(request)
 
     return render(request, 'tracker/current/current.html', context)
+
+
+def currentfull(request, skill, period, page=1):
+    """
+    Full table of records for a specific skill.
+    """
+
+    skill_id = int(skill)
+    p = Current.str_to_period(period)
+    start = (int(page) - 1) * 25
+
+    context = {
+        'skillname': accounttracker.skill_name(skill_id),
+        'period': period,
+        'start': start,
+        'page': page,
+        'current': template.record_table(skill_id, p, start, 25),
+        'searchperiod': get_searchperiod(request),
+        'use_hours': skill_id >= Skill.QHA_ID,
+    }
+
+    return render(request, 'tracker/current/full.html', context)
 
 
 def updateplayer(request):
