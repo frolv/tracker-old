@@ -192,7 +192,7 @@ def current_table(skill_id, period, start=0, limit=10):
             curval = '{:,}'.format(c.experience)
 
         else:
-            if c.hours == 0:
+            if c.hours < 0.001:
                 break
             curval = '{:,.2f}'.format(c.hours)
 
