@@ -176,14 +176,7 @@ def current_table(skill_id, period, start=0, limit=10):
     """
 
     curr = []
-    end = start + limit
-
-    if skill_id < Skill.QHA_ID:
-        top = Current.objects.filter(skill_id=skill_id, period=period) \
-                             .order_by('-experience')[start:end]
-    else:
-        top = Current.objects.filter(skill_id=skill_id, period=period) \
-                             .order_by('-hours')[start:end]
+    top = accounttracker.get_updated_current_top(skill_id, period, start, limit)
 
     for c in top:
         if skill_id < Skill.QHA_ID:

@@ -364,6 +364,62 @@ def first_datapoint(acc):
     return DataPoint.objects.filter(rsaccount=acc).order_by('time').first()
 
 
+def get_updated_current_top(skill_id, period, start, limit):
+    """
+    Check if any current top entires for skill `skill_id` in `period`
+    are out-of-date and update them.
+    Return a list of `limit` current top entries, starting from entry `start`.
+    """
+
+    # `limit` is always going to be either 10 or 25.
+    # We check more entries than required as an experience drop could push
+    # an entry out of the requested range.
+    if start == 0:
+        first = start
+        last = 50
+    else:
+        first = start - 25
+        last = start + 50
+
+    if skill_id < Skill.QHA_ID:
+        order = '-experience'
+    else:
+        order = '-hours'
+
+    currtop = Current.objects.filter(skill_id=skill_id, period=period) \
+                             .order_by(order)
+    top = currtop[first:last]
+
+    periods = {
+        'D': 1,
+        'W': 7,
+        'M': 31,
+        'Y': 365,
+    }
+    period_start = timezone.now() - timedelta(days=periods[period])
+
+    for c in top:
+        # Has the entry expired?
+        if c.start.time < period_start:
+            dp = DataPoint.objects.filter(rsaccount=c.rsaccount,
+                                          time__gte=period_start)[0]
+            # Update entry with the proper datapoint.
+            if skill_id < Skill.QHA_ID:
+                s1 = SkillLevel.objects.get(datapoint=dp, skill_id=skill_id)
+                s2 = SkillLevel.objects.get(datapoint=c.end, skill_id=skill_id)
+                c.experience = s2.experience - s1.experience
+            else:
+                s1 = SkillLevel.objects.get(datapoint=dp, skill_id=0)
+                s2 = SkillLevel.objects.get(datapoint=c.end, skill_id=0)
+                c.hours = s2.current_hours - s1.current_hours
+
+            c.start = dp
+            c.save()
+
+
+    return currtop.order_by(order)[start:start + limit]
+
+
 def skills(**kwargs):
     """
     Return set of Skill objects for all in-game skills.
@@ -449,7 +505,9 @@ def recalculate_hours(modified_skills, **kwargs):
         rates.append(SkillRate.objects.filter(skill=s).order_by('-start_exp'))
 
     for acc in RSAccount.objects.all():
+        # TODO: lock account from being modified
         recalculate_single(acc, modified_skills, rates, orig)
+        # TODO: unlock account
 
 
 def recalculate_single(acc, modified_skills, rates, orig):
