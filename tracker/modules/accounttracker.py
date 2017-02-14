@@ -402,7 +402,8 @@ def get_updated_current_top(skill_id, period, start, limit):
         # Has the entry expired?
         if c.start.time < period_start:
             dp = DataPoint.objects.filter(rsaccount=c.rsaccount,
-                                          time__gte=period_start)[0]
+                                          time__gte=period_start) \
+                                  .order_by('time')[0]
             # Update entry with the proper datapoint.
             if skill_id < Skill.QHA_ID:
                 s1 = SkillLevel.objects.get(datapoint=dp, skill_id=skill_id)
