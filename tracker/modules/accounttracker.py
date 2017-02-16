@@ -369,14 +369,21 @@ def get_updated_current_top(skill_id, period, start, limit):
     Check if any current top entires for skill `skill_id` in `period`
     are out-of-date and update them.
     Return a list of `limit` current top entries, starting from entry `start`.
+
+    Arguments:
+        skill_id (int) - ID of skill to check.
+        period (str) - Current period to check.
+        start (int) - Starting index of entries to return.
+        Always a multiple of 25.
+        limit (int) - Number of entries to return.
+        Either 10 (overview page) or 25 (full table page).
     """
 
-    # `limit` is always going to be either 10 or 25.
     # We check more entries than required as an experience drop could push
     # an entry out of the requested range.
     if start == 0:
         first = start
-        last = 50
+        last = 25 if limit == 10 else 50
     else:
         first = start - 25
         last = start + 50
@@ -401,9 +408,14 @@ def get_updated_current_top(skill_id, period, start, limit):
     for c in top:
         # Has the entry expired?
         if c.start.time < period_start:
-            dp = DataPoint.objects.filter(rsaccount=c.rsaccount,
+            # Fetch the first datapoint within the time period.
+            dps = DataPoint.objects.filter(rsaccount=c.rsaccount,
                                           time__gte=period_start) \
-                                  .order_by('time')[0]
+                                   .order_by('time')
+            if len(dps) == 0:
+                continue
+
+            dp = dps[0]
             # Update entry with the proper datapoint.
             if skill_id < Skill.QHA_ID:
                 s1 = SkillLevel.objects.get(datapoint=dp, skill_id=skill_id)
