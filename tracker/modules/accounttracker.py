@@ -364,6 +364,79 @@ def first_datapoint(acc):
     return DataPoint.objects.filter(rsaccount=acc).order_by('time').first()
 
 
+def update_player_current_top(acc):
+    """
+    Update all current top entries for a single player.
+
+    Arguments:
+        acc (RSAccount) - the account to update.
+    """
+
+    earliest = get_period_firsts(acc, timezone.now())
+    s = skills()
+    current = Current.objects.filter(rsaccount=acc)
+    dp = latest_datapoint(acc)
+
+    for skill in s:
+        curr = current.filter(skill=skill)
+
+        for c in curr:
+            if c.period == Current.DAY:
+                first = earliest[1]
+            elif c.period == Current.WEEK:
+                first = earliest[2]
+            elif c.period == Current.MONTH:
+                first = earliest[3]
+            elif c.period == Current.YEAR:
+                first = earliest[4]
+
+            # The Current entry is not out-of-date; don't bother updating it.
+            if first.time >= c.start.time:
+                continue
+
+            if first != None:
+                start = SkillLevel.objects.get(datapoint=first, skill=skill)
+                end = SkillLevel.objects.get(datapoint=dp, skill=skill)
+                c.start = first
+                c.end = dp
+                c.experience = end.experience - start.experience
+            else:
+                c.start = dp
+                c.end = dp
+                c.experience = 0
+
+            c.save()
+
+    # Now we update current hours
+    curr = current.filter(skill=Skill.QHA_ID)
+    for c in curr:
+        if c.period == Current.DAY:
+            first = earliest[1]
+        elif c.period == Current.WEEK:
+            first = earliest[2]
+        elif c.period == Current.MONTH:
+            first = earliest[3]
+        elif c.period == Current.YEAR:
+            first = earliest[4]
+
+        if first.time >= c.start.time:
+            continue
+
+        if first != None:
+            # Overall hours stored in Overall skill
+            start = SkillLevel.objects.get(datapoint=first, skill=0)
+            end = SkillLevel.objects.get(datapoint=dp, skill=0)
+            c.start = first
+            c.end = dp
+            c.hours = end.current_hours - start.current_hours
+        else:
+            c.start = dp
+            c.end = dp
+            c.hours = 0
+
+        c.save()
+
+
 def get_updated_current_top(skill_id, period, start, limit):
     """
     Check if any current top entires for skill `skill_id` in `period`

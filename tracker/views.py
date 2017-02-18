@@ -45,6 +45,7 @@ def player(request, user, period='week'):
             'searchperiod': get_searchperiod(request),
         })
 
+    accounttracker.update_player_current_top(acc)
     datapoints = accounttracker.get_data_range(acc, period)
     return HttpResponse(template.player_page(acc, datapoints, period,
                                              get_searchperiod(request)))
