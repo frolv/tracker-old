@@ -28,8 +28,11 @@ from tracker.modules.osrsapi import *
 
 def track(username):
     """
-    Look up player username on the OSRS hiscores and add a new datapoint
+    Look up player on the OSRS hiscores and add a new datapoint
     with their current levels and ranks.
+
+    Arguments:
+        username (str) - username of the player to look up
     """
 
     print('Proccessing update request for account %s.' % username)
@@ -42,7 +45,7 @@ def track(username):
         first = False
     except RSAccount.DoesNotExist:
         print('Tracking %s for the first time.' % username)
-        acc = RSAccount(username=username)
+        acc = RSAccount(username=username, total_exp=0)
         first = True
 
     # Check if the user has been updated recently.
@@ -70,6 +73,7 @@ def track(username):
         skills = hiscore_lookup(username)
         total_hours = 0
 
+        # Add a SkillLevel entry for each skill using hiscore data.
         i = len(skills) - 1
         while i >= 0:
             fields = skills[i].split(',')
@@ -81,6 +85,7 @@ def track(username):
             else:
                 exp = int(fields[2])
 
+            # SkillLevel for Overall holds total hours at this datapoint.
             if i == 0:
                 hours = total_hours
             else:
@@ -96,6 +101,10 @@ def track(username):
                 update_five_min(acc, dp, s, periods[0])
 
             i -= 1
+
+        # `s` at this point is the Overall skill
+        acc.total_exp = s.experience
+        acc.save()
 
         update_time_played(acc, dp, total_hours, periods)
         tp = TimePlayed.objects.get(rsaccount=acc)
