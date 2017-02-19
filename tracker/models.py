@@ -24,6 +24,7 @@ class RSAccount(models.Model):
     """
 
     username = models.CharField(max_length=12, db_index=True)
+    total_exp = models.BigIntegerField(db_index=True)
 
     def __str__(self):
         return self.username
