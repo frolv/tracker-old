@@ -18,14 +18,21 @@
 
 vs_type_names = {
     'exp': 'Total Experience',
+    '99s': '99 Skills',
+    '200': '200m Skills',
+    'low': 'Lowest Skill',
 }
 
 def type_name(vs_type):
     """
     """
 
-    global vs_type_names
     try:
+        global vs_type_names
         return vs_type_names[vs_type]
     except KeyError:
         return ''
+
+def vs_types():
+    global vs_type_names
+    return vs_type_names.items()
