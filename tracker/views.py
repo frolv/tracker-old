@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 
 from tracker.models import RSAccount, Skill, Record, Current
-from tracker.modules import accounttracker, osrsapi, template
+from tracker.modules import accounttracker, osrsapi, template, virtualhiscores
 
 def index(request):
     """
@@ -125,8 +125,6 @@ def current(request, skill):
 
     skill_id = int(skill)
 
-    # TODO: update current top for expired datapoints
-
     context = template.current_top(skill_id)
     context['searchperiod'] = get_searchperiod(request)
 
@@ -153,6 +151,20 @@ def currentfull(request, skill, period, page=1):
     }
 
     return render(request, 'tracker/current/full.html', context)
+
+
+def virtual(request, vs_type='exp'):
+    """
+    Virtual hiscores page.
+    """
+
+    context = {
+        'searchperiod': get_searchperiod(request),
+        'vs_type': virtualhiscores.type_name(vs_type),
+        'vs_types': virtualhiscores.vs_types(),
+    }
+
+    return render(request, 'tracker/virtual/virtual.html', context)
 
 
 def updateplayer(request):
