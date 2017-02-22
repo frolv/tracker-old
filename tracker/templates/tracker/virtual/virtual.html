@@ -1,0 +1,70 @@
+{% extends "tracker/hexistracker.html" %}
+
+{% comment %}
+ %
+ % tracker/templates/tracker/virtual/virtual.html
+ % Copyright (C) 2016-2017 Alexei Frolov
+ %
+ % This program is free software: you can redistribute it and/or modify
+ % it under the terms of the GNU General Public License as published by
+ % the Free Software Foundation, either version 3 of the License, or
+ % (at your option) any later version.
+ %
+ % This program is distributed in the hope that it will be useful,
+ % but WITHOUT ANY WARRANTY; without even the implied warranty of
+ % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ % GNU General Public License for more details.
+ %
+ % You should have received a copy of the GNU General Public License
+ % along with this program. If not, see <http://www.gnu.org/licenses/>.
+ %
+{% endcomment %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static "css/virtual.css" %}">
+{% endblock %}
+
+{% block pagetitle %}
+<title>{{ vs_type }} - Virtual Hiscores - Hexis Tracker</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div id="virtual-header"></div>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle"
+      id="virtual-type" data-toggle="dropdown" aria-haspopup="true"
+      aria-expanded="false"> {{ vs_type }}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right">
+        {% for short, long in vs_types %}
+          <li>
+            {% if long == vs_type %}
+              <a href="#" id="vs-dropdown-{{ short }}"
+                class="vs-dropdown-item disabled">
+                {{ long }}
+              </a>
+            {% else %}
+              <a href="#" id="vs-dropdown-{{ short }}" class="vs-dropdown-item">
+                {{ long }}
+              </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  <div id="virtual-body">
+    <h3 class="text-center">{{ vs_type }}</h3>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static "js/virtual.js" %}"></script>
+{% endblock %}
