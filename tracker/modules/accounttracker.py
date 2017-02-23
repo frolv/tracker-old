@@ -399,11 +399,10 @@ def update_player_current_top(acc):
             elif c.period == Current.YEAR:
                 first = earliest[4]
 
-            # The Current entry is not out-of-date; don't bother updating it.
-            if first.time >= c.start.time:
-                continue
-
             if first != None:
+                # The Current entry is not out-of-date; don't bother updating it.
+                if first.time >= c.start.time:
+                    continue
                 start = SkillLevel.objects.get(datapoint=first, skill=skill)
                 end = SkillLevel.objects.get(datapoint=dp, skill=skill)
                 c.start = first
@@ -428,10 +427,9 @@ def update_player_current_top(acc):
         elif c.period == Current.YEAR:
             first = earliest[4]
 
-        if first.time >= c.start.time:
-            continue
-
         if first != None:
+            if first.time >= c.start.time:
+                continue
             # Overall hours stored in Overall skill
             start = SkillLevel.objects.get(datapoint=first, skill=0)
             end = SkillLevel.objects.get(datapoint=dp, skill=0)
@@ -492,9 +490,17 @@ def get_updated_current_top(skill_id, period, start, limit):
         if c.start.time < period_start:
             # Fetch the first datapoint within the time period.
             dps = DataPoint.objects.filter(rsaccount=c.rsaccount,
-                                          time__gte=period_start) \
+                                           time__gte=period_start) \
                                    .order_by('time')
             if len(dps) == 0:
+                dp = latest_datapoint(c.rsaccount)
+                c.start = dp
+                c.end = dp
+                if skill_id < Skill.QHA_ID:
+                    c.experience = 0
+                else:
+                    c.hours = 0
+                c.save()
                 continue
 
             dp = dps[0]
