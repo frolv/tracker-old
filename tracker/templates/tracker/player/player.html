@@ -65,9 +65,8 @@
         </div>
       </div>
       <div id="player-skills-table-wrapper">
-        {% if table_data|length == 0 %}
-          <div id="player-skills-table-disabled">
-          </div>
+        {% if table_data.skill_list|length == 0 %}
+          <div id="player-skills-table-disabled"></div>
           <div id="player-skills-table-disabled-text">
             <p>No datapoints for this player in this time period.</p>
           </div>

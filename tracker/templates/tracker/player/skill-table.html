@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    {% if table_data|length > 0 %}
+    {% if table_data.skill_list|length > 0 %}
       {% for d in table_data.skill_list %}
         {% with i=forloop.counter0|stringformat:"s" %}
           <tr class="player-table-row" id="{{ "player-table-row-"|add:i}}">
@@ -81,7 +81,7 @@
         {% endwith %}
       {% endfor %}
     {% else %}
-    {# table_data length == 0 #}
+    {# len(table_data.skill_list) == 0 #}
       {% for s in table_skills %}
         <tr>
           <td class="player-table-skill" data-toggle="tooltip"
